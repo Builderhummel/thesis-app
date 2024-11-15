@@ -1,4 +1,4 @@
-package dbcontroller
+package db_model
 
 import (
 	"database/sql"
