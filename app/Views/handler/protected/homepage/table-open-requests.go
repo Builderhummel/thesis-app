@@ -1,6 +1,8 @@
-package protected_controller
+package view_protected_homepage
 
-type TableOpenRequests struct {
+type TableOpenRequest []TableRowOpenRequest
+
+type TableRowOpenRequest struct {
 	ThesisTypeBadge string // BA=bg_primary, MA=...
 	ThesisType      string // Type: BA, MA, PA
 	Name            string // Name of thesis candiate
@@ -13,8 +15,31 @@ type TableOpenRequests struct {
 	LinkDelete      string
 }
 
-func generateTORTestData() []TableOpenRequests {
-	return []TableOpenRequests{
+func NewTableOpenRequests() TableOpenRequest {
+	return TableOpenRequest{}
+}
+
+func (t *TableOpenRequest) AddRow(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, LinkEmail, LinkModify, LinkDelete string) {
+	*t = append(*t, NewTableRowOpenRequest(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, LinkEmail, LinkModify, LinkDelete))
+}
+
+func NewTableRowOpenRequest(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, LinkEmail, LinkModify, LinkDelete string) TableRowOpenRequest {
+	return TableRowOpenRequest{
+		ThesisTypeBadge: setThesisTypeBadge(ThesisType),
+		ThesisType:      ThesisType,
+		Name:            Name,
+		ThesisTitle:     ThesisTitle,
+		RequestDate:     RequestDate,
+		Semester:        Semester,
+		Status:          Status,
+		LinkEmail:       LinkEmail,
+		LinkModify:      LinkModify,
+		LinkDelete:      LinkDelete,
+	}
+}
+
+func GenerateTORTestData() []TableRowOpenRequest {
+	return []TableRowOpenRequest{
 		{
 			ThesisTypeBadge: "bg-primary",
 			ThesisType:      "BA",

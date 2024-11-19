@@ -1,6 +1,8 @@
-package protected_controller
+package view_protected_homepage
 
-type TableMySupervisions struct {
+type TableMySupervisions []TableRowMySupervisions
+
+type TableRowMySupervisions struct {
 	ThesisTypeBadge string // BA=bg_primary, MA=...
 	ThesisType      string // Type: BA, MA, PA
 	Name            string // Name of thesis candiate
@@ -15,8 +17,33 @@ type TableMySupervisions struct {
 	LinkDelete      string
 }
 
-func generateTMSupVTestData() []TableMySupervisions {
-	return []TableMySupervisions{
+func NewTableMySupervisions() TableMySupervisions {
+	return TableMySupervisions{}
+}
+
+func (t *TableMySupervisions) AddRow(ThesisType, Name, ThesisTitle, DeadlineDate string, Supervisor []string, Semester, Status, StatusBadge, LinkEmail, LinkModify, LinkDelete string) {
+	*t = append(*t, NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate, Supervisor, Semester, Status, StatusBadge, LinkEmail, LinkModify, LinkDelete))
+}
+
+func NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate string, Supervisor []string, Semester, Status, StatusBadge, LinkEmail, LinkModify, LinkDelete string) TableRowMySupervisions {
+	return TableRowMySupervisions{
+		ThesisTypeBadge: setThesisTypeBadge(ThesisType),
+		ThesisType:      ThesisType,
+		Name:            Name,
+		ThesisTitle:     ThesisTitle,
+		DeadlineDate:    DeadlineDate,
+		Supervisor:      Supervisor,
+		Semester:        Semester,
+		Status:          Status,
+		StatusBadge:     StatusBadge,
+		LinkEmail:       LinkEmail,
+		LinkModify:      LinkModify,
+		LinkDelete:      LinkDelete,
+	}
+}
+
+func GenerateTMSupVTestData() []TableRowMySupervisions {
+	return []TableRowMySupervisions{
 		{
 			ThesisTypeBadge: "bg-primary",
 			ThesisType:      "BA",
