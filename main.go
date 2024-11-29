@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Controllers/lib_controller"
 	"github.com/Builderhummel/thesis-app/app/Controllers/protected_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
@@ -13,6 +14,7 @@ import (
 
 func init() {
 	init_config()
+	db_model.Init()
 }
 
 func init_config() {
@@ -25,9 +27,13 @@ func init_config() {
 
 	//Config Injections here
 	db_model.Config = cfg
+	auth_controller.Config = cfg
 }
 
 func main() {
+	var err error
+	_ = err
+	/**
 	//DB stuff
 	var dbc db_model.DBController
 	_, err := dbc.OpenConnection()
@@ -46,6 +52,29 @@ func main() {
 			log.Fatalf("could not init database: %v", err)
 		}
 	}
+	*/
+
+	/*
+		//LDAP TEST
+		var auser auth_controller.AuthUser
+		err = auser.LDAP_authenticate(os.Getenv("LUSERNAME"), os.Getenv("LPASSWORD"))
+		if err != nil {
+			if ldapErr, ok := err.(*ldap.Error); ok {
+				switch ldapErr.ResultCode {
+				case ldap.LDAPResultInvalidCredentials:
+					println("Hi")
+					log.Fatalf("invalid credentials: %v", ldapErr)
+				}
+			}
+			log.Fatalf("could not authenticate: %v", err)
+		}
+		log.Printf("UID: %v", auser.UID)
+		log.Printf("Name: %v", auser.Name)
+		log.Printf("Email: %v", auser.Email)
+
+		os.Exit(0)
+		//LDAP TEST
+	*/
 
 	//Gin stuff
 	r := gin.New()

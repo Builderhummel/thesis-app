@@ -13,6 +13,9 @@ type Configuration struct {
 	DBUsername string `json:"db_username"`
 	DBPassword string `json:"db_password"`
 	DBName     string `json:"db_name"`
+	LDAPUrl    string `json:"ldap_url"`
+	LDAPDn     string `json:"ldap_dn"`
+	JWTSecret  string `json:"jwt_secret"`
 }
 
 func LoadConfig() (*Configuration, error) {

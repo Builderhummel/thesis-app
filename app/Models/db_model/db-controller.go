@@ -122,3 +122,29 @@ func (dbc *DBController) CheckIfDatabaseIsInitialized() (bool, error) {
 	}
 	return false, nil
 }
+
+func (dbc *DBController) GetLoginHandleFromDB(handle string) (string, error) {
+	var user string
+	err := dbc.db.QueryRow("SELECT LoginHandle FROM Account WHERE LoginHandle = ?", handle).Scan(&user)
+	if err != nil {
+		return "", err
+	}
+	return user, nil
+}
+
+func (dbc *DBController) ChkUserActive(handle string) (bool, error) {
+	var active bool
+	err := dbc.db.QueryRow("SELECT Active FROM Account WHERE LoginHandle = ?", handle).Scan(&active)
+	if err != nil {
+		return false, err
+	}
+	return active, nil
+}
+
+func (dbc *DBController) UpdtUser(handle, name, email string) error {
+	_, err := dbc.db.Exec("UPDATE PersonalData pd JOIN Account a ON pd.PDUID = a.PDUID SET pd.Name = ?, pd.Email = ? WHERE a.LoginHandle = ?", name, email, handle)
+	if err != nil {
+		return err
+	}
+	return nil
+}

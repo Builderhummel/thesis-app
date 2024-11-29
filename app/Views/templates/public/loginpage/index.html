@@ -1,0 +1,27 @@
+{{ define "public/loginpage/index.html" }}
+
+<head>
+    {{ template "lib_load/vendor/load_bootstrap_css.html" . }}
+    {{ template "lib_load/custom/custom_css.html" . }}
+    <title>Login</title>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.07);
+        }
+    </style>
+</head>
+
+<body>
+    {{ template "public/loginpage/login_form.html" . }}
+
+    {{ template "lib_load/vendor/load_bootstrap_js.html" . }}
+</body>
+
+{{ end }}

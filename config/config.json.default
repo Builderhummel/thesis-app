@@ -1,0 +1,10 @@
+{
+    "db_ip": "127.0.0.1",
+    "db_port": "3306",
+    "db_username": "username",
+    "db_password": "password",
+    "db_name": "thesis-app",
+    "ldap_url": "ldaps://ldap.example.com:636",
+    "ldap_dn": "ou=people,dc=tu-example,dc=de",
+    "jwt_secret": "e7bb...."
+}
