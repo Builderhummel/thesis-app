@@ -7,10 +7,10 @@ type TableRowMySupervisions struct {
 	ThesisType      string // Type: BA, MA, PA
 	Name            string // Name of thesis candiate
 	ThesisTitle     string
-	DeadlineDate    string   // Unix Time
-	Supervisor      []string // List of Supervisors
-	Semester        string   // Format: SoSe22, WiSe21/22,
-	Status          string   // everything but request
+	DeadlineDate    string // Unix Time
+	Supervisor      string // List of Supervisors
+	Semester        string // Format: SoSe22, WiSe21/22,
+	Status          string // everything but request
 	StatusBadge     string
 	LinkEmail       string // link to mailto:...
 	LinkModify      string
@@ -21,11 +21,11 @@ func NewTableMySupervisions() TableMySupervisions {
 	return TableMySupervisions{}
 }
 
-func (t *TableMySupervisions) AddRow(ThesisType, Name, ThesisTitle, DeadlineDate string, Supervisor []string, Semester, Status, StatusBadge, LinkEmail, LinkModify, LinkDelete string) {
-	*t = append(*t, NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate, Supervisor, Semester, Status, StatusBadge, LinkEmail, LinkModify, LinkDelete))
+func (t *TableMySupervisions) AddRow(ThesisType, Name, ThesisTitle, DeadlineDate, Supervisor, Semester, Status, LinkEmail, LinkModify, LinkDelete string) {
+	*t = append(*t, NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate, Supervisor, Semester, Status, LinkEmail, LinkModify, LinkDelete))
 }
 
-func NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate string, Supervisor []string, Semester, Status, StatusBadge, LinkEmail, LinkModify, LinkDelete string) TableRowMySupervisions {
+func NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate, Supervisor, Semester, Status, LinkEmail, LinkModify, LinkDelete string) TableRowMySupervisions {
 	return TableRowMySupervisions{
 		ThesisTypeBadge: setThesisTypeBadge(ThesisType),
 		ThesisType:      ThesisType,
@@ -35,154 +35,9 @@ func NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate strin
 		Supervisor:      Supervisor,
 		Semester:        Semester,
 		Status:          Status,
-		StatusBadge:     StatusBadge,
+		StatusBadge:     setStatusBadge(Status),
 		LinkEmail:       LinkEmail,
 		LinkModify:      LinkModify,
 		LinkDelete:      LinkDelete,
-	}
-}
-
-func GenerateTMSupVTestData() []TableRowMySupervisions {
-	return []TableRowMySupervisions{
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Max Mustermann",
-			ThesisTitle:     "Analysis of Big Data Techniques",
-			DeadlineDate:    "1650470400", // Unix timestamp
-			Supervisor:      []string{"Prof. Müller", "Dr. Klein"},
-			Semester:        "WiSe23/24",
-			Status:          "working",
-			StatusBadge:     "bg-success",
-			LinkEmail:       "mailto:max.mustermann@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-purple",
-			ThesisType:      "MA",
-			Name:            "Anna Schmidt",
-			ThesisTitle:     "Sustainability in Cloud Computing",
-			DeadlineDate:    "1653264000",
-			Supervisor:      []string{"Dr. Fischer", "Prof. Zhang"},
-			Semester:        "SoSe24",
-			Status:          "completed",
-			StatusBadge:     "bg-secondary",
-			LinkEmail:       "mailto:anna.schmidt@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-teal",
-			ThesisType:      "PA",
-			Name:            "John Doe",
-			ThesisTitle:     "AI for Supply Chain Optimization",
-			DeadlineDate:    "1646092800",
-			Supervisor:      []string{"Prof. Wagner", "Dr. Schmidt"},
-			Semester:        "WiSe23/24",
-			Status:          "registered",
-			StatusBadge:     "bg-info",
-			LinkEmail:       "mailto:john.doe@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Emily Fischer",
-			ThesisTitle:     "Blockchain Technologies in Healthcare",
-			DeadlineDate:    "1655846400",
-			Supervisor:      []string{"Dr. Weber", "Prof. Klein"},
-			Semester:        "SoSe23",
-			Status:          "dropped",
-			StatusBadge:     "bg-dark",
-			LinkEmail:       "mailto:emily.fischer@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-teal",
-			ThesisType:      "PA",
-			Name:            "Sophie Müller",
-			ThesisTitle:     "Quantum Computing in Financial Systems",
-			DeadlineDate:    "1638316800",
-			Supervisor:      []string{"Prof. Zhang", "Dr. Fischer"},
-			Semester:        "WiSe22/23",
-			Status:          "working",
-			StatusBadge:     "bg-success",
-			LinkEmail:       "mailto:sophie.mueller@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-purple",
-			ThesisType:      "MA",
-			Name:            "Felix Becker",
-			ThesisTitle:     "Cybersecurity in IoT Devices",
-			DeadlineDate:    "1640995200",
-			Supervisor:      []string{"Dr. Meyer", "Prof. Schwarz"},
-			Semester:        "WiSe22/23",
-			Status:          "contacted",
-			StatusBadge:     "bg-warning text-dark",
-			LinkEmail:       "mailto:felix.becker@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-teal",
-			ThesisType:      "PA",
-			Name:            "Laura Wagner",
-			ThesisTitle:     "Natural Language Processing for Education",
-			DeadlineDate:    "1643673600",
-			Supervisor:      []string{"Prof. Peters", "Dr. Koch"},
-			Semester:        "SoSe24",
-			Status:          "completed",
-			StatusBadge:     "bg-secondary",
-			LinkEmail:       "mailto:laura.wagner@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Jan Hoffmann",
-			ThesisTitle:     "Automating Processes with RPA",
-			DeadlineDate:    "1661904000",
-			Supervisor:      []string{"Dr. Müller", "Prof. Klein"},
-			Semester:        "SoSe24",
-			Status:          "contacted",
-			StatusBadge:     "bg-warning text-dark",
-			LinkEmail:       "mailto:jan.hoffmann@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-purple",
-			ThesisType:      "MA",
-			Name:            "Clara Richter",
-			ThesisTitle:     "Ethical AI in Autonomous Vehicles",
-			DeadlineDate:    "1664582400",
-			Supervisor:      []string{"Prof. Schwarz", "Dr. Becker"},
-			Semester:        "WiSe24/25",
-			Status:          "working",
-			StatusBadge:     "bg-success",
-			LinkEmail:       "mailto:clara.richter@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Michael Schwarz",
-			ThesisTitle:     "Data Privacy in Smart Cities",
-			DeadlineDate:    "1635724800",
-			Supervisor:      []string{"Prof. Wagner", "Dr. Klein"},
-			Semester:        "WiSe21/22",
-			Status:          "completed",
-			StatusBadge:     "bg-secondary",
-			LinkEmail:       "mailto:michael.schwarz@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Controllers/lib_controller"
 	"github.com/Builderhummel/thesis-app/app/Controllers/protected_controller"
+	"github.com/Builderhummel/thesis-app/app/Controllers/public_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	"github.com/Builderhummel/thesis-app/app/config"
 )
@@ -85,8 +86,9 @@ func main() {
 	r.Static("/css/bootstrap", "./app/static/vendor/bootstrap/css")
 	r.Static("/js/bootstrap", "./app/static/vendor/bootstrap/js")
 
-	protected_controller.Router(r)
 	lib_controller.Router(r)
+	protected_controller.Router(r)
+	public_controller.Router(r)
 
 	r.Run(":8080")
 

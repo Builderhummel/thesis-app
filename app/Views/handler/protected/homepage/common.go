@@ -12,3 +12,24 @@ func setThesisTypeBadge(thesisType string) string {
 		return ""
 	}
 }
+
+// request, contacted, registered, working, completed, dropped
+// TODO: Change colors
+func setStatusBadge(statusBadge string) string {
+	switch statusBadge {
+	case "request":
+		return "bg-danger"
+	case "contacted":
+		return "bg-warning"
+	case "registered":
+		return "bg-info"
+	case "working":
+		return "bg-success"
+	case "completed":
+		return "bg-secondary"
+	case "dropped":
+		return "bg-dark"
+	default:
+		return ""
+	}
+}

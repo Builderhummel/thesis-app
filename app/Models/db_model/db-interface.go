@@ -46,3 +46,23 @@ func UpdateUser(userid, name, email string) error {
 	}
 	return nil
 }
+
+func GetDataThesisTableOpenRequests() ([]map[string]string, error) {
+	data, err := dbSession.GtDataTblOpenReq()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func GetDataTableMySupervisions(user_id string) ([]map[string]string, error) {
+	puid, err := dbSession.GtUsrPuidFromUserId(user_id)
+	if err != nil {
+		return nil, err
+	}
+	data, err := dbSession.GtDataTblMySupervisions(puid)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
