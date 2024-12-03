@@ -304,3 +304,14 @@ func (dbc *DBController) GtDataTblMySupervisions(supervisor_puid string) ([]map[
 
 	return result, nil
 }
+
+func (dbc *DBController) InsrtNwThsisRequest(name, email, courseOfStudy, thesisType, thesisTitle, gpa, requestDate, notes string) error {
+	_, err := dbc.db.Exec(`
+		INSERT INTO Thesis (Name, Email, StudyProgram, ThesisType, ThesisStatus, ThesisTitle, GPA, RequestDate, Notes)
+		VALUES (?, ?, ?, ?, 'request', ?, ?, ?, ?)
+	`, name, email, courseOfStudy, thesisType, thesisTitle, gpa, requestDate, notes)
+	if err != nil {
+		return err
+	}
+	return nil
+}

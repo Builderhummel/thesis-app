@@ -1,0 +1,50 @@
+{{ define "protected/add_supervision_request/form.html" }}
+
+<div class="container my-5">
+  <h1 class="mb-4">Add Supervision Request</h1>
+  <form action="/add" method="POST">
+    <div class="mb-3">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" name="name" placeholder="Enter the name (e.g. Max Mustermann)" required>
+    </div>
+    <div class="mb-3">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" name="email" placeholder="Enter the email (e.g. mustermann@example.com)" required>
+    </div>
+    <div class="mb-3">
+      <label for="course-of-study">Course of Study</label>
+      <input type="text" class="form-control" name="course-of-study" placeholder="Enter the Course of Study (e.g. CS)" required>
+    </div>
+    <div class="mb-3">
+      <label for="thesis-type">Thesis Type</label>
+      <select class="form-control" name="thesis-type" required>
+        <option disabled selected value="" style="display:none">--- Select an option ---</option>
+        <option>BA</option>
+        <option>MA</option>
+        <option>PA</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="thesis-title">Thesis Title</label>
+      <input type="text" class="form-control" name="thesis-title" placeholder="Enter the thesis title">
+    </div>
+    <div class="mb-3">
+      <label for="gpa">GPA</label>
+      <input type="text" class="form-control" name="gpa" placeholder="Enter the GPA (x.xx)" required>
+    </div>
+    <div class="mb-3">
+      <label for="contact-date">Contact Date</label>
+      <input type="date" class="form-control" name="contact-date" required>
+    </div>
+    <div class="mb-3">
+      <label for="notes">Notes</label>
+      <textarea class="form-control" name="notes" rows="3" placeholder="Enter any additional notes"></textarea>
+    </div>
+    <div class="d-flex justify-content-end">
+      <button type="button submit" class="btn btn-primary me-2">Add</button>
+      <a href="/" class="btn btn-secondary" role="button">Cancel</a>
+    </div>
+  </form>
+</div>
+
+{{ end }}

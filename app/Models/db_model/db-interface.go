@@ -66,3 +66,11 @@ func GetDataTableMySupervisions(user_id string) ([]map[string]string, error) {
 	}
 	return data, nil
 }
+
+func InsertNewThesisRequest(name, email, courseOfStudy, thesisType, thesisTitle, gpa, contactDate, notes string) error {
+	err := dbSession.InsrtNwThsisRequest(name, email, courseOfStudy, thesisType, thesisTitle, gpa, contactDate, notes)
+	if err != nil {
+		return err
+	}
+	return nil
+}
