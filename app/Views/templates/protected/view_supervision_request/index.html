@@ -1,0 +1,15 @@
+{{ define "protected/view_supervision_request/index.html" }}
+
+{{ template "protected/view_supervision_request/header.html" . }}
+
+<body>
+
+{{ template "protected/common/navbar.html" . }}
+
+{{ template "protected/view_supervision_request/content_body.html" . }}
+
+{{ template "lib_load/vendor/load_bootstrap_js.html"}}
+
+</body>
+
+{{ end }}

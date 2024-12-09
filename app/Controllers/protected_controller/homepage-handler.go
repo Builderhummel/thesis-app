@@ -41,7 +41,7 @@ func fillTableOpenRequests() (view_protected_homepage.TableOpenRequest, error) {
 		return nil, err
 	}
 	for _, row_data := range tor_data {
-		tor.AddRow(row_data["thesisType"], row_data["name"], row_data["thesisTitle"], row_data["requestDate"], "SoSe22-tbc", row_data["status"], "mailto:"+row_data["email"], "#", "#")
+		tor.AddRow(row_data["thesisType"], row_data["name"], row_data["thesisTitle"], row_data["requestDate"], "SoSe22-tbc", row_data["status"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
 	}
 	return tor, nil
 }
@@ -53,7 +53,7 @@ func fillTableMySupervisions(user_id string) (view_protected_homepage.TableMySup
 	}
 	tmsv := view_protected_homepage.NewTableMySupervisions()
 	for _, row_data := range tab_data {
-		tmsv.AddRow(row_data["thesistype"], row_data["name"], row_data["thesistitle"], row_data["deadline"], row_data["supervisor"], "SoSe24-tbc", row_data["thesisstatus"], "mailto:"+row_data["email"], "#", "#")
+		tmsv.AddRow(row_data["thesistype"], row_data["name"], row_data["thesistitle"], row_data["deadline"], row_data["supervisor"], "SoSe24-tbc", row_data["thesisstatus"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
 	}
 	return tmsv, nil
 }

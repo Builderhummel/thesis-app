@@ -1,0 +1,104 @@
+{{ define "protected/view_supervision_request/form.html" }}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>View Supervision Request</h1>
+        <button class="btn btn-primary">Edit Request</button>
+    </div>
+
+    <h3 class="mb-4">Student info</h3>
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Name</label>
+            <div>{{ .StudInf.Name }}</div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Email</label>
+            <div>{{ .StudInf.Email }}</div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Course of Study</label>
+            <div>{{ .StudInf.CourseOfStudy }}</div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">GPA</label>
+            <div>{{ .StudInf.GPA }}</div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3 class="mb-4">Thesis info</h3>
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Thesis Type</label>
+            <div>{{ .ThesisInf.ThesisType }}</div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Thesis Title</label>
+            <div>{{ .ThesisInf.ThesisTitle }}</div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Thesis Status</label>
+            <div>{{ .ThesisInf.ThesisStatus }}</div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Final Grade</label>
+            <div>{{ .ThesisInf.FinalGrade }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-3 mb-3">
+                <label class="form-label fw-bold">Request Date</label>
+                <div>{{ .ThesisInf.RequestDate }}</div>
+            </div>
+            <div class="col-3 mb-3">
+                <label class="form-label fw-bold">Contact Date</label>
+                <div>{{ .ThesisInf.ContactDate }}</div>
+            </div>
+            <div class="col-3 mb-3">
+                <label class="form-label fw-bold">Deadline</label>
+                <div>{{ .ThesisInf.Deadline }}</div>
+            </div>
+            <div class="col-3 mb-3">
+                <label class="form-label fw-bold">Submit Date</label>
+                <div>{{ .ThesisInf.SubmitDate }}</div>
+            </div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Supervisors</label>
+            <div>
+              {{ range .ThesisInf.Supervisors }}
+                <div>{{ . }}</div>
+              {{ end }}
+            </div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Examiners</label>
+            <div>
+              {{ range .ThesisInf.Examiners }}
+                <div>{{ . }}</div>
+              {{ end }}
+            </div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">Notes</label>
+            <div>{{ .ThesisInf.Notes }}</div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <a href="/" class="btn btn-secondary" role="button">Back to List</a>
+    </div>
+</div>
+
+{{ end }}

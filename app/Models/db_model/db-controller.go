@@ -18,7 +18,7 @@ type DBController struct {
 
 func (dbc *DBController) OpenConnection() (*sql.DB, error) {
 	var err error
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", Config.DBUsername, Config.DBPassword, Config.DBIP, Config.DBPort, Config.DBName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", Config.DBUsername, Config.DBPassword, Config.DBIP, Config.DBPort, Config.DBName)
 	fmt.Println(dsn)
 	dbc.db, err = sql.Open("mysql", dsn)
 	if err != nil {
@@ -300,6 +300,78 @@ func (dbc *DBController) GtDataTblMySupervisions(supervisor_puid string) ([]map[
 
 	if err = rows.Err(); err != nil {
 		return nil, err
+	}
+
+	return result, nil
+}
+
+func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData, error) {
+	// Main thesis data query
+	mainQuery := `
+    SELECT 
+        Name, Email, StudyProgram, GPA, ThesisType, ThesisTitle, 
+        ThesisStatus,
+		COALESCE(FinalGrade, -1) as FinalGrade, 
+		CAST(COALESCE(RequestDate, '0001-01-01') AS DATE) as RequestDate, 
+		CAST(COALESCE(ContactDate, '0001-01-01') AS DATE) as ContactDate, 
+		CAST(COALESCE(Deadline, '0001-01-01') AS DATE) as Deadline, 
+		CAST(COALESCE(SubmitDate, '0001-01-01') AS DATE) as SubmitDate, 
+		Notes
+    FROM Thesis 
+    WHERE TUID = ?`
+
+	result := &ThesisFullData{}
+	err := dbc.db.QueryRow(mainQuery, thesisID).Scan(
+		&result.Name, &result.Email, &result.StudyProgram,
+		&result.GPA, &result.ThesisType, &result.ThesisTitle,
+		&result.ThesisStatus, &result.FinalGrade, &result.RequestDate,
+		&result.ContactDate, &result.Deadline, &result.SubmitDate,
+		&result.Notes,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching thesis data: %v", err)
+	}
+
+	// Get supervisors
+	supervisorQuery := `
+    SELECT pd.Name 
+    FROM PersonalData pd
+    JOIN SupervisorJunction sj ON pd.PDUID = sj.PDUID
+    WHERE sj.TUID = ?`
+
+	supervisorRows, err := dbc.db.Query(supervisorQuery, thesisID)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching supervisors: %v", err)
+	}
+	defer supervisorRows.Close()
+
+	for supervisorRows.Next() {
+		var name string
+		if err := supervisorRows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("error scanning supervisor: %v", err)
+		}
+		result.Supervisors = append(result.Supervisors, name)
+	}
+
+	// Get examiners
+	examinerQuery := `
+    SELECT pd.Name 
+    FROM PersonalData pd
+    JOIN ExaminerJunction ej ON pd.PDUID = ej.PDUID
+    WHERE ej.TUID = ?`
+
+	examinerRows, err := dbc.db.Query(examinerQuery, thesisID)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching examiners: %v", err)
+	}
+	defer examinerRows.Close()
+
+	for examinerRows.Next() {
+		var name string
+		if err := examinerRows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("error scanning examiner: %v", err)
+		}
+		result.Examiners = append(result.Examiners, name)
 	}
 
 	return result, nil
