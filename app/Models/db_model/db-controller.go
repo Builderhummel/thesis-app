@@ -39,8 +39,10 @@ func (dbc *DBController) InitDatabase() error {
 			Name VARCHAR(255),
 			Email VARCHAR(255),
 			StudyProgram VARCHAR(255),
+			Booked BOOLEAN,
 			ThesisType VARCHAR(255),
 			ThesisStatus VARCHAR(255),
+			Semester VARCHAR(255),
 			ThesisTitle VARCHAR(255),
 			GPA FLOAT,
 			RequestDate DATE,
@@ -309,8 +311,11 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 	// Main thesis data query
 	mainQuery := `
     SELECT 
-        Name, Email, StudyProgram, GPA, ThesisType, ThesisTitle, 
+        Name, Email, StudyProgram,
+		COALESCE(Booked, FALSE) AS Booked,
+		GPA, ThesisType, ThesisTitle, 
         ThesisStatus,
+		COALESCE(Semester, '') as Semester,
 		COALESCE(FinalGrade, -1) as FinalGrade, 
 		CAST(COALESCE(RequestDate, '0001-01-01') AS DATE) as RequestDate, 
 		CAST(COALESCE(ContactDate, '0001-01-01') AS DATE) as ContactDate, 
@@ -322,9 +327,9 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 
 	result := &ThesisFullData{}
 	err := dbc.db.QueryRow(mainQuery, thesisID).Scan(
-		&result.Name, &result.Email, &result.StudyProgram,
+		&result.Name, &result.Email, &result.StudyProgram, &result.Booked,
 		&result.GPA, &result.ThesisType, &result.ThesisTitle,
-		&result.ThesisStatus, &result.FinalGrade, &result.RequestDate,
+		&result.ThesisStatus, &result.Semester, &result.FinalGrade, &result.RequestDate,
 		&result.ContactDate, &result.Deadline, &result.SubmitDate,
 		&result.Notes,
 	)
