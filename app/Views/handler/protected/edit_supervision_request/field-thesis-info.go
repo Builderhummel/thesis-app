@@ -77,15 +77,18 @@ func overwriteEmptyPD(slice []PersonalData) []PersonalData {
 }
 
 func splitSemesterInfo(semester string) (string, string, error) {
-	re := regexp.MustCompile(`^(WiSe|SoSe)(\d{2}/\d{2})$`)
+	re := regexp.MustCompile(`^(SoSe|WiSe)(\d{2})(\/\d{2})?$`)
 
 	matches := re.FindStringSubmatch(semester)
 
-	if len(matches) != 3 {
-		return "", "", fmt.Errorf("invalid semester format")
+	if len(matches) == 3 {
+		return matches[1], matches[2], nil
+	}
+	if len(matches) == 4 {
+		return matches[1], matches[2] + matches[3], nil
 	}
 
-	return matches[1], matches[2], nil
+	return "", "", fmt.Errorf("invalid semester format")
 }
 
 func getSemesterSeason(semester string) string {

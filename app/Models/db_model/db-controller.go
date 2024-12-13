@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Builderhummel/thesis-app/app/config"
 
@@ -365,7 +366,7 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 	// Main thesis data query
 	mainQuery := `
     SELECT 
-        Name, Email, StudyProgram,
+        TUID, Name, Email, StudyProgram,
 		COALESCE(Booked, FALSE) AS Booked,
 		GPA, ThesisType, ThesisTitle, 
         ThesisStatus,
@@ -381,7 +382,7 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 
 	result := &ThesisFullData{}
 	err := dbc.db.QueryRow(mainQuery, thesisID).Scan(
-		&result.Name, &result.Email, &result.StudyProgram, &result.Booked,
+		&result.TUID, &result.Name, &result.Email, &result.StudyProgram, &result.Booked,
 		&result.GPA, &result.ThesisType, &result.ThesisTitle,
 		&result.ThesisStatus, &result.Semester, &result.FinalGrade, &result.RequestDate,
 		&result.ContactDate, &result.Deadline, &result.SubmitDate,
@@ -447,4 +448,86 @@ func (dbc *DBController) InsrtNwThsisRequest(name, email, courseOfStudy, thesisT
 		return err
 	}
 	return nil
+}
+
+func (dbc *DBController) UpdtThesisInfo(td ThesisFullData) error {
+	tx, err := dbc.db.Begin()
+	if err != nil {
+		return fmt.Errorf("begin transaction: %v", err)
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec(`
+        UPDATE Thesis 
+        SET Name=?, Email=?, StudyProgram=?, Booked=?, 
+            ThesisType=?, ThesisStatus=?, Semester=?, 
+            ThesisTitle=?, GPA=?, RequestDate=?, ContactDate=?, 
+            SubmitDate=?, Deadline=?, FinalGrade=?, Notes=?
+        WHERE TUID = ?`,
+		td.Name, td.Email, td.StudyProgram, td.Booked,
+		td.ThesisType, td.ThesisStatus, td.Semester,
+		td.ThesisTitle,
+		convertGradeToNullFloat(td.GPA),
+		convertGoDateToSqlNullDate(td.RequestDate),
+		convertGoDateToSqlNullDate(td.ContactDate),
+		convertGoDateToSqlNullDate(td.SubmitDate),
+		convertGoDateToSqlNullDate(td.Deadline),
+		convertGradeToNullFloat(td.FinalGrade),
+		td.Notes,
+		td.TUID)
+	if err != nil {
+		return fmt.Errorf("update thesis: %v", err)
+	}
+
+	if err := dbc.updtJunction(tx, td.TUID, td.Supervisors, "SupervisorJunction"); err != nil {
+		return fmt.Errorf("update supervisors: %v", err)
+	}
+
+	if err := dbc.updtJunction(tx, td.TUID, td.Examiners, "ExaminerJunction"); err != nil {
+		return fmt.Errorf("update examiners: %v", err)
+	}
+
+	err = tx.Commit()
+
+	return err
+}
+
+func (dbc *DBController) updtJunction(tx *sql.Tx, thesisID string, people []PersonalData, junctionTable string) error {
+	_, err := tx.Exec(fmt.Sprintf("DELETE FROM %s WHERE TUID = ?", junctionTable), thesisID) // Not insecure, bc fixed variable
+	if err != nil {
+		return err
+	}
+
+	for _, person := range people {
+		var exists bool
+		err := tx.QueryRow("SELECT EXISTS(SELECT 1 FROM PersonalData WHERE PDUID = ?)", person.PDUid).Scan(&exists)
+		if err != nil {
+			return fmt.Errorf("pduid validation error: %v", err)
+		}
+		if !exists {
+			return fmt.Errorf("invalid PDUID: %s", person.PDUid)
+		}
+
+		_, err = tx.Exec(fmt.Sprintf("INSERT INTO %s (TUID, PDUID) VALUES (?, ?)", junctionTable), // Not insecure, bc fixed variable
+			thesisID, person.PDUid)
+		if err != nil {
+			return fmt.Errorf("junction insert error: %v", err)
+		}
+	}
+
+	return nil
+}
+
+func convertGoDateToSqlNullDate(date time.Time) sql.NullTime {
+	if date.IsZero() {
+		return sql.NullTime{Valid: false}
+	}
+	return sql.NullTime{Time: date, Valid: true}
+}
+
+func convertGradeToNullFloat(fg float64) sql.NullFloat64 {
+	if fg == -1 {
+		return sql.NullFloat64{Valid: false}
+	}
+	return sql.NullFloat64{Float64: fg, Valid: true}
 }

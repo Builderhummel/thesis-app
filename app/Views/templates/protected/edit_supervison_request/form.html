@@ -1,7 +1,7 @@
 {{ define "protected/edit_supervision_request/form.html" }}
 <div class="container my-5">
   <h1 class="mb-4">Edit Supervision Request</h1>
-  <form action="/edit" method="POST">
+  <form action="/edit?tuid={{ .ThesisInf.Tuid }}" method="POST">
       <h3 class="mb-4">Student info</h3>
       <div class="col-12 mb-3">
           <label for="name" class="form-label">Name</label>
@@ -24,8 +24,8 @@
       </div>
 
       <div class="col-12 mb-3">
-          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" {{if .StudInf.Booked}}checked{{end}}>
-          <label class="form-check-label" for="flexCheckDefault" data-bs-toggle="tooltip" data-bs-placement="right" title="Only touch if you know what you are doing!">
+          <input class="form-check-input" type="checkbox" value="true" id="thesis-booked" name="thesis-booked" {{if .StudInf.Booked}}checked{{end}}>
+          <label class="form-check-label" for="thesis" data-bs-toggle="tooltip" data-bs-placement="right" title="Only touch if you know what you are doing!">
             Booked
           </label>
       </div>

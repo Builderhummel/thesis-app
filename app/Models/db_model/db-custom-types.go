@@ -3,6 +3,7 @@ package db_model
 import "time"
 
 type ThesisFullData struct {
+	TUID         string
 	Name         string
 	Email        string
 	StudyProgram string

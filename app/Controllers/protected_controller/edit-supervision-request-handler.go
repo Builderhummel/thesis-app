@@ -75,6 +75,97 @@ func RenderEditSupervisionRequestForm(c *gin.Context) {
 
 func HandleEditSupervisionRequest(c *gin.Context) {
 	fmt.Printf("a%+v\n", c.PostFormArray("supervisors[]"))
+	tfd := db_model.ThesisFullData{}
+	supervisors := []db_model.PersonalData{}
+	examiners := []db_model.PersonalData{}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Success!"})
+	tuid := c.Query("tuid")
+	if tuid == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No tuid provided"})
+		return
+	}
+	if tuid_num, err := strconv.Atoi(tuid); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid tuid"})
+		return
+	} else if tuid_num < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid tuid"})
+		return
+	}
+
+	gpa, err := processGradeString(c.PostForm("gpa"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with GPA"})
+		return
+	}
+
+	finalGrade, err := processGradeString(c.PostForm("final-grade"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with final grade"})
+		return
+	}
+
+	requestDate, err := parseDateStringToGoDate(c.PostForm("request-date"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with request date"})
+		return
+	}
+
+	contactDate, err := parseDateStringToGoDate(c.PostForm("contact-date"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with contact date"})
+		return
+	}
+
+	deadline, err := parseDateStringToGoDate(c.PostForm("deadline"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with deadline"})
+		return
+	}
+
+	submitDate, err := parseDateStringToGoDate(c.PostForm("submit-date"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with submit date"})
+		return
+	}
+
+	println(c.PostForm("thesis-booked"))
+
+	tfd.TUID = tuid
+	tfd.Name = c.PostForm("name")
+	tfd.Email = c.PostForm("email")
+	tfd.StudyProgram = c.PostForm("study-program")
+	tfd.GPA = gpa
+	tfd.Booked = c.PostForm("thesis-booked") == "true"
+	tfd.ThesisType = c.PostForm("thesis-type")
+	tfd.ThesisTitle = c.PostForm("thesis-title")
+	tfd.ThesisStatus = c.PostForm("thesis-status")
+	tfd.Semester = concatSemesterInfo(c.PostForm("thesis-semester"), c.PostForm("thesis-semester-year")) //to handle thesis-semester, thesis-semester-year
+	tfd.FinalGrade = finalGrade
+	tfd.RequestDate = requestDate
+	tfd.ContactDate = contactDate
+	tfd.Deadline = deadline
+	tfd.SubmitDate = submitDate
+	tfd.Notes = c.PostForm("notes")
+
+	supervisors_puid := c.PostFormArray("supervisors[]")
+	examiners_puid := c.PostFormArray("examiners[]")
+
+	for _, puid := range supervisors_puid {
+		supervisors = append(supervisors, db_model.PersonalData{PDUid: puid})
+	}
+	for _, puid := range examiners_puid {
+		examiners = append(examiners, db_model.PersonalData{PDUid: puid})
+	}
+
+	tfd.Supervisors = supervisors
+	tfd.Examiners = examiners
+
+	err = db_model.UpdateThesisInfo(tfd)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()}) //TODO: Proper error handling
+		return
+	}
+
+	returnUrl := fmt.Sprintf("/view?tuid=%s", tuid)
+	c.Redirect(http.StatusSeeOther, returnUrl) // TODO: Add success message (flash alert?)
 }
