@@ -47,6 +47,22 @@ func UpdateUser(userid, name, email string) error {
 	return nil
 }
 
+func GetAllSupervisors() ([]PersonalData, error) {
+	data, err := dbSession.GtAllSupervisors()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func GetAllExaminers() ([]PersonalData, error) {
+	data, err := dbSession.GtAllExaminers()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func GetDataThesisTableOpenRequests() ([]map[string]string, error) {
 	data, err := dbSession.GtDataTblOpenReq()
 	if err != nil {

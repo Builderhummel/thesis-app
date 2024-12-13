@@ -61,7 +61,9 @@ func (dbc *DBController) InitDatabase() error {
 		CREATE TABLE PersonalData (
 			PDUID INT AUTO_INCREMENT PRIMARY KEY,
 			Name VARCHAR(255),
-			Email VARCHAR(255)
+			Email VARCHAR(255),
+			IsSupervisor BOOLEAN DEFAULT FALSE,
+			IsExaminer BOOLEAN DEFAULT FALSE
 		)
 	`)
 	if err != nil {
@@ -150,6 +152,58 @@ func (dbc *DBController) UpdtUser(handle, name, email string) error {
 		return err
 	}
 	return nil
+}
+
+func (dbc *DBController) GtAllSupervisors() ([]PersonalData, error) {
+	query := "SELECT PDUID, Name, Email FROM PersonalData WHERE IsSupervisor = 1"
+
+	rows, err := dbc.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	var supervisors []PersonalData
+
+	for rows.Next() {
+		var supervisor PersonalData
+		if err := rows.Scan(&supervisor.PDUid, &supervisor.Name, &supervisor.Email); err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+		supervisors = append(supervisors, supervisor)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("row iteration error: %w", err)
+	}
+
+	return supervisors, nil
+}
+
+func (dbc *DBController) GtAllExaminers() ([]PersonalData, error) {
+	query := "SELECT PDUID, Name, Email FROM PersonalData WHERE IsExaminer = 1"
+
+	rows, err := dbc.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	var examiners []PersonalData
+
+	for rows.Next() {
+		var examiner PersonalData
+		if err := rows.Scan(&examiner.PDUid, &examiner.Name, &examiner.Email); err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+		examiners = append(examiners, examiner)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("row iteration error: %w", err)
+	}
+
+	return examiners, nil
 }
 
 func (dbc *DBController) GtUsrPuidFromUserId(user_id string) (string, error) {
@@ -339,45 +393,47 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 
 	// Get supervisors
 	supervisorQuery := `
-    SELECT pd.Name 
-    FROM PersonalData pd
-    JOIN SupervisorJunction sj ON pd.PDUID = sj.PDUID
-    WHERE sj.TUID = ?`
-
+	SELECT pd.PDUID, pd.Name, pd.Email
+	FROM PersonalData pd
+	JOIN SupervisorJunction sj ON pd.PDUID = sj.PDUID
+	WHERE sj.TUID = ?`
 	supervisorRows, err := dbc.db.Query(supervisorQuery, thesisID)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching supervisors: %v", err)
 	}
 	defer supervisorRows.Close()
 
+	var supervisors []PersonalData
 	for supervisorRows.Next() {
-		var name string
-		if err := supervisorRows.Scan(&name); err != nil {
+		var supervisor PersonalData
+		if err := supervisorRows.Scan(&supervisor.PDUid, &supervisor.Name, &supervisor.Email); err != nil {
 			return nil, fmt.Errorf("error scanning supervisor: %v", err)
 		}
-		result.Supervisors = append(result.Supervisors, name)
+		supervisors = append(supervisors, supervisor)
 	}
+	result.Supervisors = supervisors
 
 	// Get examiners
 	examinerQuery := `
-    SELECT pd.Name 
-    FROM PersonalData pd
-    JOIN ExaminerJunction ej ON pd.PDUID = ej.PDUID
-    WHERE ej.TUID = ?`
-
+	SELECT pd.PDUID, pd.Name, pd.Email
+	FROM PersonalData pd
+	JOIN ExaminerJunction ej ON pd.PDUID = ej.PDUID
+	WHERE ej.TUID = ?`
 	examinerRows, err := dbc.db.Query(examinerQuery, thesisID)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching examiners: %v", err)
 	}
 	defer examinerRows.Close()
 
+	var examiners []PersonalData
 	for examinerRows.Next() {
-		var name string
-		if err := examinerRows.Scan(&name); err != nil {
+		var examiner PersonalData
+		if err := examinerRows.Scan(&examiner.PDUid, &examiner.Name, &examiner.Email); err != nil {
 			return nil, fmt.Errorf("error scanning examiner: %v", err)
 		}
-		result.Examiners = append(result.Examiners, name)
+		examiners = append(examiners, examiner)
 	}
+	result.Examiners = examiners
 
 	return result, nil
 }

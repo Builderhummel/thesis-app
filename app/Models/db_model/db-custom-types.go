@@ -17,7 +17,13 @@ type ThesisFullData struct {
 	ContactDate  time.Time
 	Deadline     time.Time
 	SubmitDate   time.Time
-	Supervisors  []string
-	Examiners    []string
+	Supervisors  []PersonalData
+	Examiners    []PersonalData
 	Notes        string
+}
+
+type PersonalData struct {
+	PDUid string
+	Name  string
+	Email string
 }

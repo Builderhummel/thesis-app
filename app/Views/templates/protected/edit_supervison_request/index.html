@@ -1,0 +1,18 @@
+{{ define "protected/edit_supervision_request/index.html" }}
+
+{{ template "protected/edit_supervision_request/header.html" . }}
+
+<body>
+
+{{ template "protected/common/navbar.html" . }}
+
+{{ template "protected/edit_supervision_request/content_body.html" . }}
+
+{{ template "lib_load/vendor/load_bootstrap_js.html"}}
+{{ template "lib_load/vendor/load_jquery_js.html" . }}
+{{ template "lib_load/vendor/load_select2_js.html" }}
+{{ template "protected/edit_supervision_request/select2_scripts.html" . }}
+
+</body>
+
+{{ end }}

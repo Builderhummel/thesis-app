@@ -15,8 +15,6 @@ func Router(r *gin.Engine) {
 
 	protected.GET("/view", RenderViewSupervisionRequestForm)
 
-	protected.GET("/edit_example", func(c *gin.Context) {
-		c.HTML(200, "protected/edit_supervision_request/example.html", gin.H{})
-	})
-
+	protected.GET("/edit", RenderEditSupervisionRequestForm)
+	protected.POST("/edit", HandleEditSupervisionRequest)
 }
