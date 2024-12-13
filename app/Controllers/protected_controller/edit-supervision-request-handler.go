@@ -55,6 +55,7 @@ func RenderEditSupervisionRequestForm(c *gin.Context) {
 
 	thesisInf := view_protected_edit_supervision_request.NewFieldThesisInfo()
 	thesisInf.SetInfo(
+		tuid,
 		tfd.ThesisType,
 		tfd.ThesisTitle,
 		tfd.ThesisStatus, tfd.Semester,

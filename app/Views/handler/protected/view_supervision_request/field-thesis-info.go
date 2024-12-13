@@ -6,6 +6,7 @@ import (
 )
 
 type FieldThesisInfo struct {
+	Tuid         string
 	ThesisType   string
 	ThesisTitle  string
 	ThesisStatus string
@@ -23,7 +24,8 @@ func NewFieldThesisInfo() FieldThesisInfo {
 	return FieldThesisInfo{}
 }
 
-func (f *FieldThesisInfo) SetInfo(ThesisType, ThesisTitle, ThesisStatus string, FinalGrade float64, RequestDate, ContactDate, Deadline, SubmitDate time.Time, Supervisors []string, Examiners []string, Notes string) {
+func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus string, FinalGrade float64, RequestDate, ContactDate, Deadline, SubmitDate time.Time, Supervisors []string, Examiners []string, Notes string) {
+	f.Tuid = Tuid
 	f.ThesisType = ThesisType
 	f.ThesisTitle = ThesisTitle
 	f.ThesisStatus = ThesisStatus
