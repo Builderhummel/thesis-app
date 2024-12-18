@@ -20,6 +20,9 @@ func Router(r *gin.Engine) {
 
 	protected.GET("/users", RenderListAllUsers)
 
+	protected.GET("/new_user", RenderNewUser)
+	protected.POST("/new_user", HandlePostNewUser)
+
 	protected.GET("/edit_user", RenderEditUser)
 	protected.POST("/edit_user", HandlePostEditUser)
 }

@@ -290,6 +290,47 @@ func (dbc *DBController) GtUsrPuidFromUserId(user_id string) (string, error) {
 	return puid, nil
 }
 
+func (dbc *DBController) InsrtNwUsr(name, email, loginHandle string, active, isSupervisor, isExaminer bool) error {
+	tx, err := dbc.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	query1 := `
+		INSERT INTO PersonalData (Name, Email, IsSupervisor, IsExaminer)
+		VALUES (?, ?, ?, ?);
+	`
+
+	res, err := tx.Exec(query1, name, email, isSupervisor, isExaminer)
+	if err != nil {
+		_ = tx.Rollback()
+		return fmt.Errorf("failed to insert into PersonalData: %w", err)
+	}
+
+	lastInsertID, err := res.LastInsertId()
+	if err != nil {
+		_ = tx.Rollback()
+		return fmt.Errorf("failed to retrieve last insert ID: %w", err)
+	}
+
+	query2 := `
+		INSERT INTO Account (PDUID, LoginHandle, Active)
+		VALUES (?, ?, ?);
+	`
+
+	_, err = tx.Exec(query2, lastInsertID, loginHandle, active)
+	if err != nil {
+		_ = tx.Rollback()
+		return fmt.Errorf("failed to insert into Account: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
+}
+
 func (dbc *DBController) UptFullUsr(puid, name, email, loginHandle string, active, isSupervisor, isExaminer bool) error {
 	tx, err := dbc.db.Begin()
 	if err != nil {
