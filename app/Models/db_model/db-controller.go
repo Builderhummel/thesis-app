@@ -386,7 +386,8 @@ func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {
         Name,
         DATE_FORMAT(RequestDate, '%Y-%m-%d') AS RequestDate,
         ThesisStatus,
-        Email
+        Email,
+		COALESCE(Semester, '') as Semester
     FROM 
         Thesis
     WHERE 
@@ -408,7 +409,7 @@ func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {
 	// Iterate through the rows
 	for rows.Next() {
 		var (
-			tuid, thesisType, thesisTitle, name, requestDate, status, email string
+			tuid, thesisType, thesisTitle, name, requestDate, status, email, semester string
 		)
 
 		// Scan the row values
@@ -420,6 +421,7 @@ func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {
 			&requestDate,
 			&status,
 			&email,
+			&semester,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("error scanning row: %v", err)
@@ -434,6 +436,104 @@ func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {
 			"requestDate": requestDate,
 			"status":      status,
 			"email":       email,
+			"semester":    semester,
+		}
+
+		results = append(results, row_data)
+	}
+
+	// Check for any errors encountered during iteration
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error during row iteration: %v", err)
+	}
+
+	return results, nil
+}
+
+func (dbc *DBController) GtDataTblAllSupervisions() ([]map[string]string, error) {
+	// SQL query to select all thesis information
+	query := `
+		SELECT 
+			TUID,
+			ThesisType,
+			ThesisTitle,
+			Name,
+			COALESCE(DATE_FORMAT(Deadline, '%Y-%m-%d'), '') AS Deadline,
+			ThesisStatus,
+			Email,
+			COALESCE(Semester, '') as Semester
+		FROM 
+			Thesis
+		ORDER BY 
+			Deadline DESC;
+
+	`
+
+	// Execute the query
+	rows, err := dbc.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("error executing query: %v", err)
+	}
+	defer rows.Close()
+
+	// Slice to store the results
+	var results []map[string]string
+
+	// Iterate through the rows
+	for rows.Next() {
+		var (
+			tuid, thesisType, thesisTitle, name, deadline, status, email, semester string
+		)
+
+		// Scan the row values
+		err := rows.Scan(
+			&tuid,
+			&thesisType,
+			&thesisTitle,
+			&name,
+			&deadline,
+			&status,
+			&email,
+			&semester,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("error scanning row: %v", err)
+		}
+
+		//Get supervisors for this thesis
+		supervisorQuery := `
+			SELECT pd.Name
+			FROM SupervisorJunction sj
+			JOIN PersonalData pd ON sj.PDUID = pd.PDUID
+			WHERE sj.TUID = ?
+		`
+
+		supervisorRows, err := dbc.db.Query(supervisorQuery, tuid)
+		if err != nil {
+			return nil, fmt.Errorf("error fetching supervisors: %v", err)
+		}
+		defer supervisorRows.Close()
+
+		var supervisors []string
+		for supervisorRows.Next() {
+			var supervisor string
+			if err := supervisorRows.Scan(&supervisor); err != nil {
+				return nil, fmt.Errorf("error scanning supervisor: %v", err)
+			}
+			supervisors = append(supervisors, supervisor)
+		}
+
+		//Map results
+		row_data := map[string]string{
+			"tuid":        tuid,
+			"thesisType":  thesisType,
+			"thesisTitle": thesisTitle,
+			"name":        name,
+			"deadline":    deadline,
+			"status":      status,
+			"email":       email,
+			"supervisor":  strings.Join(supervisors, ", "),
+			"semester":    semester,
 		}
 
 		results = append(results, row_data)
@@ -457,7 +557,8 @@ func (dbc *DBController) GtDataTblMySupervisions(supervisor_puid string) ([]map[
             t.ThesisTitle,
             COALESCE(t.Deadline, '') as Deadline,
             t.ThesisStatus,
-            t.Email
+            t.Email,
+			COALESCE(t.Semester, '') as Semester
         FROM Thesis t
         JOIN SupervisorJunction sj ON t.TUID = sj.TUID
         JOIN PersonalData pd ON pd.PDUID = ?
@@ -472,9 +573,9 @@ func (dbc *DBController) GtDataTblMySupervisions(supervisor_puid string) ([]map[
 	var result []map[string]string
 
 	for rows.Next() {
-		var tuid, thesisType, name, thesisTitle, deadline, thesisStatus, email string
+		var tuid, thesisType, name, thesisTitle, deadline, thesisStatus, email, semester string
 
-		err := rows.Scan(&tuid, &thesisType, &name, &thesisTitle, &deadline, &thesisStatus, &email)
+		err := rows.Scan(&tuid, &thesisType, &name, &thesisTitle, &deadline, &thesisStatus, &email, &semester)
 		if err != nil {
 			return nil, err
 		}
@@ -510,6 +611,7 @@ func (dbc *DBController) GtDataTblMySupervisions(supervisor_puid string) ([]map[
 			"supervisor":   strings.Join(supervisors, ", "),
 			"thesisstatus": thesisStatus,
 			"email":        email,
+			"semester":     semester,
 		}
 
 		result = append(result, row)

@@ -10,6 +10,8 @@ func Router(r *gin.Engine) {
 	protected.Use(middleware.JwtAuthMiddleware())
 	protected.GET("/", RenderHomepage)
 
+	protected.GET("/all", RenderAllSupervisions)
+
 	protected.GET("/add", RenderAddSupervisionRequestForm)
 	protected.POST("/add", HandleNewSupervisionRequest)
 

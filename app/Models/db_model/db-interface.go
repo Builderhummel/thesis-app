@@ -103,6 +103,14 @@ func GetDataThesisTableOpenRequests() ([]map[string]string, error) {
 	return data, nil
 }
 
+func GetDataTableAllSupervisions() ([]map[string]string, error) {
+	data, err := dbSession.GtDataTblAllSupervisions()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func GetDataTableMySupervisions(user_id string) ([]map[string]string, error) {
 	puid, err := dbSession.GtUsrPuidFromUserId(user_id)
 	if err != nil {
