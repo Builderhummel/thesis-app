@@ -19,4 +19,7 @@ func Router(r *gin.Engine) {
 	protected.POST("/edit", HandleEditSupervisionRequest)
 
 	protected.GET("/users", RenderListAllUsers)
+
+	protected.GET("/edit_user", RenderEditUser)
+	protected.POST("/edit_user", HandlePostEditUser)
 }

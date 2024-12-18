@@ -202,6 +202,33 @@ func (dbc *DBController) GtAllUsrs() ([]PersonalData, error) {
 	return users, nil
 }
 
+func (dbc *DBController) GtUsrByPUID(puid string) (PersonalData, error) {
+	query := `
+    SELECT 
+        COALESCE(pd.PDUID, ''),
+        COALESCE(pd.Name, ''),
+        COALESCE(pd.Email, ''),
+        COALESCE(a.LoginHandle, ''),
+        COALESCE(a.Active, FALSE),
+        COALESCE(pd.IsSupervisor, FALSE),
+        COALESCE(pd.IsExaminer, FALSE)
+    FROM 
+        PersonalData pd
+    LEFT JOIN 
+        Account a ON pd.PDUID = a.PDUID
+	WHERE
+		pd.PDUID = ?
+    `
+
+	var user PersonalData
+	err := dbc.db.QueryRow(query, puid).Scan(&user.PDUid, &user.Name, &user.Email, &user.Handle, &user.IsActive, &user.IsSupervisor, &user.IsExaminer)
+	if err != nil {
+		return PersonalData{}, fmt.Errorf("error fetching user: %v", err)
+	}
+
+	return user, nil
+}
+
 func (dbc *DBController) GtAllSupervisors() ([]PersonalData, error) {
 	query := "SELECT PDUID, Name, Email FROM PersonalData WHERE IsSupervisor = 1"
 
@@ -261,6 +288,51 @@ func (dbc *DBController) GtUsrPuidFromUserId(user_id string) (string, error) {
 		return "", err
 	}
 	return puid, nil
+}
+
+func (dbc *DBController) UptFullUsr(puid, name, email, loginHandle string, active, isSupervisor, isExaminer bool) error {
+	tx, err := dbc.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	query1 := `
+		UPDATE PersonalData
+		SET 
+			Name = ?,
+			Email = ?,
+			IsSupervisor = ?,
+			IsExaminer = ?
+		WHERE 
+			PDUID = ?;
+	`
+
+	_, err = tx.Exec(query1, name, email, isSupervisor, isExaminer, puid)
+	if err != nil {
+		_ = tx.Rollback()
+		return fmt.Errorf("failed to update PersonalData: %w", err)
+	}
+
+	query2 := `
+		UPDATE Account
+		SET 
+			LoginHandle = ?,
+			Active = ?
+		WHERE 
+			PDUID = ?;
+	`
+
+	_, err = tx.Exec(query2, loginHandle, active, puid)
+	if err != nil {
+		_ = tx.Rollback()
+		return fmt.Errorf("failed to update Account: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
 }
 
 func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {

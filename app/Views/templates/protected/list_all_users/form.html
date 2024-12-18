@@ -1,5 +1,10 @@
 {{ define "protected/list_all_users/form.html" }}
 <hr/>
+
+<div class="text-end mb-3">
+  <a href="/new_user" class="btn btn-primary">New User</a>
+</div>
+
 <p class="h3">Users</p>
 <div class="table-responsive" style="overflow-y: auto;">
 <table class="table table-hover align-middle">
@@ -45,7 +50,7 @@
       </td>      
       <td>
         <div class="btn-group btn-group-sm" role="group">
-          <button class="btn btn-outline-primary">E</button>
+          <a href="/edit_user?puid={{ .PDUID }}" class="btn btn-outline-primary">E</a>
           <button class="btn btn-outline-danger">D</button>
         </div>
       </td>

@@ -1,6 +1,7 @@
-package listallusers
+package view_protected_listallusers
 
 type TableRowAllUsers struct {
+	PDUID        string
 	Name         string
 	Email        string
 	LoginHandle  string
@@ -15,12 +16,13 @@ func NewTableAllUsers() TableAllUsers {
 	return TableAllUsers{}
 }
 
-func (t *TableAllUsers) AddRow(Name, Email, LoginHandle string, IsActive, IsSupervisor, IsExaminer bool) {
-	*t = append(*t, NewTableRowAllUsers(Name, Email, LoginHandle, IsActive, IsSupervisor, IsExaminer))
+func (t *TableAllUsers) AddRow(PDUID, Name, Email, LoginHandle string, IsActive, IsSupervisor, IsExaminer bool) {
+	*t = append(*t, NewTableRowAllUsers(PDUID, Name, Email, LoginHandle, IsActive, IsSupervisor, IsExaminer))
 }
 
-func NewTableRowAllUsers(Name, Email, LoginHandle string, IsActive, IsSupervisor, IsExaminer bool) TableRowAllUsers {
+func NewTableRowAllUsers(PDUID, Name, Email, LoginHandle string, IsActive, IsSupervisor, IsExaminer bool) TableRowAllUsers {
 	return TableRowAllUsers{
+		PDUID:        PDUID,
 		Name:         Name,
 		Email:        Email,
 		LoginHandle:  LoginHandle,

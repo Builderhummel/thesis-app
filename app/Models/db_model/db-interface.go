@@ -55,6 +55,14 @@ func GetAllUsers() ([]PersonalData, error) {
 	return data, nil
 }
 
+func GetUserByPUID(puid string) (PersonalData, error) {
+	data, err := dbSession.GtUsrByPUID(puid)
+	if err != nil {
+		return PersonalData{}, err
+	}
+	return data, nil
+}
+
 func GetAllSupervisors() ([]PersonalData, error) {
 	data, err := dbSession.GtAllSupervisors()
 	if err != nil {
@@ -69,6 +77,14 @@ func GetAllExaminers() ([]PersonalData, error) {
 		return nil, err
 	}
 	return data, nil
+}
+
+func UpdateFullUser(puid, name, email, handle string, active, isSupervisor, isExaminer bool) error {
+	err := dbSession.UptFullUsr(puid, name, email, handle, active, isSupervisor, isExaminer)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func GetDataThesisTableOpenRequests() ([]map[string]string, error) {
