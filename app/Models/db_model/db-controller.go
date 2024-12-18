@@ -393,7 +393,7 @@ func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {
     WHERE 
         ThesisStatus = 'request'
     ORDER BY 
-        RequestDate
+        RequestDate ASC;
     `
 
 	// Execute the query
@@ -465,7 +465,7 @@ func (dbc *DBController) GtDataTblAllSupervisions() ([]map[string]string, error)
 		FROM 
 			Thesis
 		ORDER BY 
-			Deadline DESC;
+			RequestDate DESC;
 
 	`
 
@@ -562,7 +562,8 @@ func (dbc *DBController) GtDataTblMySupervisions(supervisor_puid string) ([]map[
         FROM Thesis t
         JOIN SupervisorJunction sj ON t.TUID = sj.TUID
         JOIN PersonalData pd ON pd.PDUID = ?
-        WHERE sj.PDUID = ?`
+        WHERE sj.PDUID = ?
+		ORDER BY Deadline DESC`
 
 	rows, err := dbc.db.Query(query, supervisor_puid, supervisor_puid)
 	if err != nil {
