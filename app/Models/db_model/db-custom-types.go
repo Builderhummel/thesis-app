@@ -24,7 +24,11 @@ type ThesisFullData struct {
 }
 
 type PersonalData struct {
-	PDUid string
-	Name  string
-	Email string
+	PDUid        string
+	Name         string
+	Email        string
+	Handle       string
+	IsActive     bool
+	IsSupervisor bool
+	IsExaminer   bool
 }

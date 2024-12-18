@@ -1,0 +1,15 @@
+{{ define "protected/list_all_users/index.html" }}
+
+{{ template "protected/list_all_users/header.html" . }}
+
+<body>
+
+{{ template "protected/common/navbar.html" . }}
+
+{{ template "protected/list_all_users/content_body.html" . }}
+
+{{ template "lib_load/vendor/load_bootstrap_js.html"}}
+
+</body>
+
+{{ end }}

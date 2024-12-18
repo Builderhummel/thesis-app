@@ -47,6 +47,14 @@ func UpdateUser(userid, name, email string) error {
 	return nil
 }
 
+func GetAllUsers() ([]PersonalData, error) {
+	data, err := dbSession.GtAllUsrs()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func GetAllSupervisors() ([]PersonalData, error) {
 	data, err := dbSession.GtAllSupervisors()
 	if err != nil {

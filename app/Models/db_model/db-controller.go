@@ -155,6 +155,53 @@ func (dbc *DBController) UpdtUser(handle, name, email string) error {
 	return nil
 }
 
+func (dbc *DBController) GtAllUsrs() ([]PersonalData, error) {
+	query := `
+    SELECT 
+        COALESCE(pd.PDUID, ''),
+        COALESCE(pd.Name, ''),
+        COALESCE(pd.Email, ''),
+        COALESCE(a.LoginHandle, ''),
+        COALESCE(a.Active, FALSE),
+        COALESCE(pd.IsSupervisor, FALSE),
+        COALESCE(pd.IsExaminer, FALSE)
+    FROM 
+        PersonalData pd
+    LEFT JOIN 
+        Account a ON pd.PDUID = a.PDUID
+    `
+
+	rows, err := dbc.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query users: %v", err)
+	}
+	defer rows.Close()
+
+	var users []PersonalData
+	for rows.Next() {
+		var user PersonalData
+		err := rows.Scan(
+			&user.PDUid,
+			&user.Name,
+			&user.Email,
+			&user.Handle,
+			&user.IsActive,
+			&user.IsSupervisor,
+			&user.IsExaminer,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan user row: %v", err)
+		}
+		users = append(users, user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating user rows: %v", err)
+	}
+
+	return users, nil
+}
+
 func (dbc *DBController) GtAllSupervisors() ([]PersonalData, error) {
 	query := "SELECT PDUID, Name, Email FROM PersonalData WHERE IsSupervisor = 1"
 
