@@ -16,6 +16,14 @@ func RenderHomepage(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not extract user handle"}) //TODO: Proper error handling
 		return
 	}
+
+	//Summary
+	summary, err := getSummary()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()}) //TODO: Proper error handling
+		return
+	}
+
 	//Table Open Requests
 	tabOpReq, err := fillTableOpenRequests()
 	if err != nil {
@@ -29,9 +37,22 @@ func RenderHomepage(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "protected/homepage/index.html", gin.H{
+		"Summary":   summary,
 		"TabOpReq":  tabOpReq,
 		"TabMySupV": tabMySupV,
 	})
+}
+
+func getSummary() (view_protected_homepage.Summary, error) {
+	summary_data, err := db_model.GetHomepageRCW()
+	if err != nil {
+		return view_protected_homepage.Summary{}, err
+	}
+
+	summary := view_protected_homepage.NewSummary()
+
+	summary.SetSummary(summary_data["requested"], summary_data["contacted"], summary_data["working"])
+	return summary, nil
 }
 
 func fillTableOpenRequests() (view_protected_homepage.TableOpenRequest, error) {

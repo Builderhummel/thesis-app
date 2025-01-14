@@ -3,6 +3,7 @@ package db_model
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -374,6 +375,74 @@ func (dbc *DBController) UptFullUsr(puid, name, email, loginHandle string, activ
 	}
 
 	return nil
+}
+
+// Get Amount of request, contacted(=contacted, registered), working
+func (dbc *DBController) GtHomepageRCW() (map[string]string, error) {
+	// SQL query to select requested thesis information
+	query := `
+	SELECT 
+		COUNT(ThesisStatus = 'request' OR NULL) AS Requested,
+		COUNT(ThesisStatus = 'contacted' OR NULL) AS Contacted,
+		COUNT(ThesisStatus = 'registered' OR NULL) AS Registered,
+		COUNT(ThesisStatus = 'working' OR NULL) AS Working
+	FROM 
+		Thesis;
+	`
+
+	// Execute the query
+	rows, err := dbc.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("error executing query: %v", err)
+	}
+	defer rows.Close()
+
+	// Slice to store the results
+	var results map[string]string
+
+	// Iterate through the rows
+	for rows.Next() {
+		var (
+			requested, contacted, registered, working string
+		)
+
+		// Scan the row values
+		err := rows.Scan(
+			&requested,
+			&contacted,
+			&registered,
+			&working,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("error scanning row: %v", err)
+		}
+
+		intContacted, err := strconv.Atoi(contacted)
+		if err != nil {
+			return nil, fmt.Errorf("error converting contacted to int: %v", err)
+		}
+
+		intRegistered, err := strconv.Atoi(registered)
+		if err != nil {
+			return nil, fmt.Errorf("error converting registered to int: %v", err)
+		}
+
+		newContacted := strconv.Itoa(intContacted + intRegistered)
+
+		//Map results
+		results = map[string]string{
+			"requested": requested,
+			"contacted": newContacted,
+			"working":   working,
+		}
+	}
+
+	// Check for any errors encountered during iteration
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error during row iteration: %v", err)
+	}
+
+	return results, nil
 }
 
 func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {

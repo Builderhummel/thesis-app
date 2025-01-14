@@ -1,9 +1,9 @@
 {{ define "protected/homepage/summary.html" }}
 <div class="card" style="width: 9rem;">
     <ul class="list-group list-group-flush">
-      <li class="list-group-item bg-danger">Requested: 11</li>
-      <li class="list-group-item bg-warning">Contacted: 23</li>
-      <li class="list-group-item">Working: 23</li>
+      <li class="list-group-item bg-danger">Requested: {{ .Summary.Requested }}</li>
+      <li class="list-group-item bg-warning">Contacted: {{ .Summary.Contacted }}</li>
+      <li class="list-group-item">Working: {{ .Summary.Working }}</li>
     </ul>
 </div>
 {{ end }}

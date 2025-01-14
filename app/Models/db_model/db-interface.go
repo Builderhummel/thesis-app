@@ -95,6 +95,14 @@ func UpdateFullUser(puid, name, email, handle string, active, isSupervisor, isEx
 	return nil
 }
 
+func GetHomepageRCW() (map[string]string, error) {
+	result, err := dbSession.GtHomepageRCW()
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func GetDataThesisTableOpenRequests() ([]map[string]string, error) {
 	data, err := dbSession.GtDataTblOpenReq()
 	if err != nil {
