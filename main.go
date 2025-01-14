@@ -40,6 +40,12 @@ func main() {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
+	//Enforce Strict CSP
+	r.Use(func(c *gin.Context) {
+		c.Header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';")
+		c.Next()
+	})
+
 	//Bootstrap
 	r.Static("/css/bootstrap", "./app/static/vendor/bootstrap/css")
 	r.Static("/js/bootstrap", "./app/static/vendor/bootstrap/js")

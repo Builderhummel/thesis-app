@@ -29,3 +29,6 @@ config.json
 
 # Launcher file
 launcher.sh
+
+# Apple
+.DS_Store

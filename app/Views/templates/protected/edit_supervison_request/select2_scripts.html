@@ -1,17 +1,5 @@
 {{ define "protected/edit_supervision_request/select2_scripts.html" }}
 
-<script>
-    $(document).ready(function() {
-        $('#supervisors').select2({
-            placeholder: "Select supervisors",
-            allowClear: true
-        });
-
-        $('#examiners').select2({
-            placeholder: "Select examiners",
-            allowClear: true
-        });
-    });
-</script>
+<script src="/js/custom/edit/select2.js"></script>
 
 {{ end }}
