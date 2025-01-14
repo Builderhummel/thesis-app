@@ -74,7 +74,6 @@ func RenderEditSupervisionRequestForm(c *gin.Context) {
 }
 
 func HandleEditSupervisionRequest(c *gin.Context) {
-	fmt.Printf("a%+v\n", c.PostFormArray("supervisors[]"))
 	tfd := db_model.ThesisFullData{}
 	supervisors := []db_model.PersonalData{}
 	examiners := []db_model.PersonalData{}
@@ -127,8 +126,6 @@ func HandleEditSupervisionRequest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with submit date"})
 		return
 	}
-
-	println(c.PostForm("thesis-booked"))
 
 	tfd.TUID = tuid
 	tfd.Name = c.PostForm("name")

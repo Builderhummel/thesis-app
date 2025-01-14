@@ -21,7 +21,6 @@ type DBController struct {
 func (dbc *DBController) OpenConnection() (*sql.DB, error) {
 	var err error
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", Config.DBUsername, Config.DBPassword, Config.DBIP, Config.DBPort, Config.DBName)
-	fmt.Println(dsn)
 	dbc.db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err

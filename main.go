@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -61,6 +62,7 @@ func main() {
 	protected_controller.Router(r)
 	public_controller.Router(r)
 
-	r.Run(":8080")
+	fmt.Println("Application running...")
 
+	r.Run(":8080")
 }
