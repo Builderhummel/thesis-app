@@ -6,7 +6,9 @@ import (
 )
 
 func RenderNewUser(c *gin.Context) {
-	c.HTML(200, "protected/new_user/index.html", gin.H{})
+	c.HTML(200, "protected/new_user/index.html", gin.H{
+		"Navbar": renderNavbar(),
+	})
 }
 
 func HandlePostNewUser(c *gin.Context) {

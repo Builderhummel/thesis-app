@@ -39,6 +39,7 @@ func RenderViewSupervisionRequestForm(c *gin.Context) {
 	thesisInf.SetInfo(tuid, tfd.ThesisType, tfd.ThesisTitle, tfd.ThesisStatus, tfd.FinalGrade, tfd.RequestDate, tfd.ContactDate, tfd.Deadline, tfd.SubmitDate, getSupervisorsSliceFromPersonalData(tfd.Supervisors), getSupervisorsSliceFromPersonalData(tfd.Examiners), tfd.Notes)
 
 	c.HTML(http.StatusOK, "protected/view_supervision_request/index.html", gin.H{
+		"Navbar":    renderNavbar(),
 		"StudInf":   studInf,
 		"ThesisInf": thesisInf,
 	})

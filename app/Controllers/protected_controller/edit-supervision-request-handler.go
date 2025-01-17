@@ -68,6 +68,7 @@ func RenderEditSupervisionRequestForm(c *gin.Context) {
 		tfd.Notes)
 
 	c.HTML(http.StatusOK, "protected/edit_supervision_request/index.html", gin.H{
+		"Navbar":    renderNavbar(),
 		"StudInf":   studInf,
 		"ThesisInf": thesisInf,
 	})

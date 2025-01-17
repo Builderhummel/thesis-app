@@ -37,6 +37,7 @@ func RenderHomepage(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "protected/homepage/index.html", gin.H{
+		"Navbar":    renderNavbar(),
 		"Summary":   summary,
 		"TabOpReq":  tabOpReq,
 		"TabMySupV": tabMySupV,

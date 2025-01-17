@@ -19,7 +19,9 @@ type SupervisionRequestForm struct {
 }
 
 func RenderAddSupervisionRequestForm(c *gin.Context) {
-	c.HTML(http.StatusOK, "protected/add_supervision_request/index.html", gin.H{})
+	c.HTML(http.StatusOK, "protected/add_supervision_request/index.html", gin.H{
+		"Navbar": renderNavbar(),
+	})
 }
 
 // TODO: Sanitize input -> why on earth is XSS not working?!?!

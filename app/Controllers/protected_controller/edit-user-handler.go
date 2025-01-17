@@ -34,7 +34,8 @@ func RenderEditUser(c *gin.Context) {
 	fUser.SetUser(userData.PDUid, userData.Name, userData.Email, userData.Handle, userData.IsActive, userData.IsSupervisor, userData.IsExaminer)
 
 	c.HTML(200, "protected/edit_user/index.html", gin.H{
-		"User": fUser,
+		"Navbar": renderNavbar(),
+		"User":   fUser,
 	})
 }
 

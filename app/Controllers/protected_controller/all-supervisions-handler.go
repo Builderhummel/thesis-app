@@ -15,6 +15,7 @@ func RenderAllSupervisions(c *gin.Context) {
 
 	c.HTML(200, "protected/all_supervisions/index.html", gin.H{
 		"TabAllSupV": tabAllSupervisions,
+		"Navbar":     renderNavbar(),
 	})
 }
 

@@ -24,6 +24,7 @@ func RenderListAllUsers(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "protected/list_all_users/index.html", gin.H{
-		"Users": tabAllUsrs,
+		"Navbar": renderNavbar(),
+		"Users":  tabAllUsrs,
 	})
 }
