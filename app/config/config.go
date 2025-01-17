@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -22,6 +23,10 @@ func LoadConfig() (*Configuration, error) {
 	var cfg Configuration
 	file, err := os.Open("config/config.json")
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			//TODO: Make this more beautiful, implemented this only for docker!!!
+			return loadFromEnvvar(), nil
+		}
 		return nil, fmt.Errorf("could not open config file: %v", err)
 	}
 	defer file.Close()
@@ -36,4 +41,18 @@ func LoadConfig() (*Configuration, error) {
 	}
 
 	return &cfg, nil
+}
+
+func loadFromEnvvar() *Configuration {
+	var cfg Configuration
+	cfg.DBIP = os.Getenv("DB_IP")
+	cfg.DBPort = os.Getenv("DB_PORT")
+	cfg.DBUsername = os.Getenv("DB_USERNAME")
+	cfg.DBPassword = os.Getenv("DB_PASSWORD")
+	cfg.DBName = os.Getenv("DB_NAME")
+	cfg.LDAPUrl = os.Getenv("LDAP_URL")
+	cfg.LDAPDn = os.Getenv("LDAP_DN")
+	cfg.JWTSecret = os.Getenv("JWT_SECRET")
+
+	return &cfg
 }

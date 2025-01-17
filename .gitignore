@@ -32,3 +32,6 @@ launcher.sh
 
 # Apple
 .DS_Store
+
+# Temporary
+docker/
