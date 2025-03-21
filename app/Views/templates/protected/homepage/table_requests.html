@@ -3,13 +3,24 @@
 <p class="h3">Open Requests</p>
 <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
     <table class="table table-hover align-middle">
+        <colgroup>
+          <col style="width: 2.5%;">  <!-- Type -->
+          <col style="width: 30%;">  <!-- Name -->
+          <col style="width: 30%;">  <!-- Course of Study -->
+          <col style="width: 5%;">  <!-- GPA -->
+      </colgroup>
+      <colgroup align="right">
+          <col style="width: 7.5%;">  <!-- Request Date -->
+          <col style="width: 5%;">  <!-- Status -->
+          <col style="width: 5%;">  <!-- Action -->
+      </colgroup>
       <thead class="table-light">
         <tr>
           <th>Type</th>
           <th>Name</th>
-          <th>Title</th>
+          <th>Course of Study</th>
+          <th>GPA</th>
           <th>Request Date</th>
-          <th>Semester</th>
           <th>Status</th>
           <th>Action</th>
         </tr>
@@ -19,9 +30,9 @@
         <tr>
             <td><span class="badge {{ .ThesisTypeBadge}}">{{ .ThesisType }}</span></td>
             <td>{{ .Name }}</td>
-            <td>{{ .ThesisTitle }}</td>
+            <td>{{ .CourseOfStudy }}</td>
+            <td>{{ .GPA }}</td>
             <td>{{ .RequestDate }}</td>
-            <td>{{ .Semester }}</td>
             <td><span class="badge bg-danger">{{ .Status }}</span></td>
             <td>
               <div class="btn-group btn-group-sm" role="group">

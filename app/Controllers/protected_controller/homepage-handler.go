@@ -63,7 +63,7 @@ func fillTableOpenRequests() (view_protected_homepage.TableOpenRequest, error) {
 		return nil, err
 	}
 	for _, row_data := range tor_data {
-		tor.AddRow(row_data["thesisType"], row_data["name"], row_data["thesisTitle"], row_data["requestDate"], row_data["semester"], row_data["status"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
+		tor.AddRow(row_data["thesisType"], row_data["name"], row_data["courseOfStudy"], row_data["gpa"], row_data["requestDate"], row_data["status"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
 	}
 	return tor, nil
 }

@@ -451,12 +451,12 @@ func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {
     SELECT 
         TUID,
         ThesisType,
-		ThesisTitle,
+		studyProgram,
         Name,
         DATE_FORMAT(RequestDate, '%Y-%m-%d') AS RequestDate,
         ThesisStatus,
         Email,
-		COALESCE(Semester, '') as Semester
+		COALESCE(GPA, '-1') as GPA
     FROM 
         Thesis
     WHERE 
@@ -478,19 +478,20 @@ func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {
 	// Iterate through the rows
 	for rows.Next() {
 		var (
-			tuid, thesisType, thesisTitle, name, requestDate, status, email, semester string
+			tuid, thesisType, courseOfStudy, name, requestDate, status, email string
+			gpa                                                               float64
 		)
 
 		// Scan the row values
 		err := rows.Scan(
 			&tuid,
 			&thesisType,
-			&thesisTitle,
+			&courseOfStudy,
 			&name,
 			&requestDate,
 			&status,
 			&email,
-			&semester,
+			&gpa,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("error scanning row: %v", err)
@@ -498,14 +499,14 @@ func (dbc *DBController) GtDataTblOpenReq() ([]map[string]string, error) {
 
 		//Map results
 		row_data := map[string]string{
-			"tuid":        tuid,
-			"thesisType":  thesisType,
-			"thesisTitle": thesisTitle,
-			"name":        name,
-			"requestDate": requestDate,
-			"status":      status,
-			"email":       email,
-			"semester":    semester,
+			"tuid":          tuid,
+			"thesisType":    thesisType,
+			"courseOfStudy": courseOfStudy,
+			"name":          name,
+			"requestDate":   requestDate,
+			"status":        status,
+			"email":         email,
+			"gpa":           fmt.Sprintf("%.2f", gpa),
 		}
 
 		results = append(results, row_data)

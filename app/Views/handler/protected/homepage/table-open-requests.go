@@ -6,9 +6,9 @@ type TableRowOpenRequest struct {
 	ThesisTypeBadge string // BA=bg_primary, MA=...
 	ThesisType      string // Type: BA, MA, PA
 	Name            string // Name of thesis candiate
-	ThesisTitle     string
+	CourseOfStudy   string
+	GPA             string // e.g. 4.0
 	RequestDate     string // Unix Time
-	Semester        string // Format: SoSe22, WiSe21/22,
 	Status          string // requested only xDD
 	LinkEmail       string // link to mailto:...
 	LinkModify      string
@@ -23,142 +23,17 @@ func (t *TableOpenRequest) AddRow(ThesisType, Name, ThesisTitle, RequestDate, Se
 	*t = append(*t, NewTableRowOpenRequest(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, LinkEmail, LinkModify, LinkDelete))
 }
 
-func NewTableRowOpenRequest(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, LinkEmail, LinkModify, LinkDelete string) TableRowOpenRequest {
+func NewTableRowOpenRequest(ThesisType, Name, CourseOfStudy, GPA, RequestDate, Status, LinkEmail, LinkModify, LinkDelete string) TableRowOpenRequest {
 	return TableRowOpenRequest{
 		ThesisTypeBadge: setThesisTypeBadge(ThesisType),
 		ThesisType:      ThesisType,
 		Name:            Name,
-		ThesisTitle:     ThesisTitle,
+		CourseOfStudy:   CourseOfStudy,
+		GPA:             GPA,
 		RequestDate:     RequestDate,
-		Semester:        Semester,
 		Status:          Status,
 		LinkEmail:       LinkEmail,
 		LinkModify:      LinkModify,
 		LinkDelete:      LinkDelete,
-	}
-}
-
-func GenerateTORTestData() []TableRowOpenRequest {
-	return []TableRowOpenRequest{
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Max Mustermann",
-			ThesisTitle:     "Lorem Ipsum",
-			RequestDate:     "1630000000",
-			Semester:        "SoSe22",
-			Status:          "request",
-			LinkEmail:       "mailto:abc@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Anna Schmidt",
-			ThesisTitle:     "Understanding Data Science",
-			RequestDate:     "1622505600",
-			Semester:        "WiSe21/22",
-			Status:          "request",
-			LinkEmail:       "mailto:anna@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-teal",
-			ThesisType:      "PA",
-			Name:            "John Doe",
-			ThesisTitle:     "Quantum Computing Applications",
-			RequestDate:     "1635000000",
-			Semester:        "SoSe21",
-			Status:          "request",
-			LinkEmail:       "mailto:john.doe@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-teal",
-			ThesisType:      "PA",
-			Name:            "Sophie Klein",
-			ThesisTitle:     "AI in Healthcare",
-			RequestDate:     "1636305600",
-			Semester:        "WiSe20/21",
-			Status:          "request",
-			LinkEmail:       "mailto:sophie.klein@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Lukas Müller",
-			ThesisTitle:     "Exploring the Web of Things",
-			RequestDate:     "1619702400",
-			Semester:        "SoSe20",
-			Status:          "request",
-			LinkEmail:       "mailto:lukas@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-teal",
-			ThesisType:      "PA",
-			Name:            "Eva Sommer",
-			ThesisTitle:     "The Role of Blockchain in Finance",
-			RequestDate:     "1642905600",
-			Semester:        "WiSe22/23",
-			Status:          "request",
-			LinkEmail:       "mailto:eva.sommer@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Michael Bauer",
-			ThesisTitle:     "Cloud Computing Security",
-			RequestDate:     "1609459200",
-			Semester:        "WiSe19/20",
-			Status:          "request",
-			LinkEmail:       "mailto:michael.bauer@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-primary",
-			ThesisType:      "BA",
-			Name:            "Julia Becker",
-			ThesisTitle:     "Data Privacy in Modern Systems",
-			RequestDate:     "1625097600",
-			Semester:        "SoSe21",
-			Status:          "request",
-			LinkEmail:       "mailto:julia.becker@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-purple",
-			ThesisType:      "MA",
-			Name:            "Felix Wagner",
-			ThesisTitle:     "Advances in Computer Vision",
-			RequestDate:     "1646092800",
-			Semester:        "WiSe22/23",
-			Status:          "request",
-			LinkEmail:       "mailto:felix.wagner@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
-		{
-			ThesisTypeBadge: "bg-teal",
-			ThesisType:      "PA",
-			Name:            "Clara Richter",
-			ThesisTitle:     "Automating Data Analysis with AI",
-			RequestDate:     "1650403200",
-			Semester:        "SoSe22",
-			Status:          "request",
-			LinkEmail:       "mailto:clara.richter@example.org",
-			LinkModify:      "#",
-			LinkDelete:      "#",
-		},
 	}
 }
