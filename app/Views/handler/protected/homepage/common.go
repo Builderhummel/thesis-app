@@ -29,6 +29,8 @@ func setStatusBadge(statusBadge string) string {
 		return "bg-secondary"
 	case "dropped":
 		return "bg-dark"
+	case "reject":
+		return "bg-dark"
 	default:
 		return ""
 	}

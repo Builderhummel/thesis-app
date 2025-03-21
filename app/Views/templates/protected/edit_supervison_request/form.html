@@ -55,9 +55,9 @@
             <option disabled selected value="" style="display:none" {{if eq .ThesisInf.ThesisStatus ""}}selected{{end}}>--- Select Status ---</option>
             <option {{if eq .ThesisInf.ThesisStatus "request"}}selected{{end}}>request</option>
             <option {{if eq .ThesisInf.ThesisStatus "contacted"}}selected{{end}}>contacted</option>
-            <option {{if eq .ThesisInf.ThesisStatus "registered"}}selected{{end}}>registered</option>
             <option {{if eq .ThesisInf.ThesisStatus "working"}}selected{{end}}>working</option>
             <option {{if eq .ThesisInf.ThesisStatus "completed"}}selected{{end}}>completed</option>
+            <option {{if eq .ThesisInf.ThesisStatus "reject"}}selected{{end}}>reject</option>
             <option {{if eq .ThesisInf.ThesisStatus "dropped"}}selected{{end}}>dropped</option>              
         </select>
     </div>
