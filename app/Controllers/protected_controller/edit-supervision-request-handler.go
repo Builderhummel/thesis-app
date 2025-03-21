@@ -61,7 +61,8 @@ func RenderEditSupervisionRequestForm(c *gin.Context) {
 		tfd.ThesisStatus, tfd.Semester,
 		tfd.FinalGrade,
 		tfd.RequestDate,
-		tfd.ContactDate,
+		tfd.ResponseDate,
+		tfd.RegisteredDate,
 		tfd.Deadline, tfd.SubmitDate,
 		annotatedSupervisors,
 		annotatedExaminers,
@@ -110,9 +111,15 @@ func HandleEditSupervisionRequest(c *gin.Context) {
 		return
 	}
 
-	contactDate, err := parseDateStringToGoDate(c.PostForm("contact-date"))
+	responseDate, err := parseDateStringToGoDate(c.PostForm("contact-date"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with contact date"})
+		return
+	}
+
+	registeredDate, err := parseDateStringToGoDate(c.PostForm("registered-date"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error with registered date"})
 		return
 	}
 
@@ -140,7 +147,8 @@ func HandleEditSupervisionRequest(c *gin.Context) {
 	tfd.Semester = concatSemesterInfo(c.PostForm("thesis-semester"), c.PostForm("thesis-semester-year")) //to handle thesis-semester, thesis-semester-year
 	tfd.FinalGrade = finalGrade
 	tfd.RequestDate = requestDate
-	tfd.ContactDate = contactDate
+	tfd.ResponseDate = responseDate
+	tfd.RegisteredDate = registeredDate
 	tfd.Deadline = deadline
 	tfd.SubmitDate = submitDate
 	tfd.Notes = c.PostForm("notes")

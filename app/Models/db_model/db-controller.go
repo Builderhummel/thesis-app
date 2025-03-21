@@ -47,7 +47,8 @@ func (dbc *DBController) InitDatabase() error {
 			ThesisTitle VARCHAR(255),
 			GPA FLOAT,
 			RequestDate DATE,
-			ContactDate DATE,
+			ResponseDate DATE,
+			RegisteredDate DATE,
 			SubmitDate DATE,
 			Deadline DATE,
 			FinalGrade FLOAT,
@@ -704,7 +705,8 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 		COALESCE(Semester, '') as Semester,
 		COALESCE(FinalGrade, -1) as FinalGrade, 
 		CAST(COALESCE(RequestDate, '0001-01-01') AS DATE) as RequestDate, 
-		CAST(COALESCE(ContactDate, '0001-01-01') AS DATE) as ContactDate, 
+		CAST(COALESCE(ResponseDate, '0001-01-01') AS DATE) as ResponseDate, 
+		CAST(COALESCE(RegisteredDate, '0001-01-01') AS DATE) as RegisteredDate, 
 		CAST(COALESCE(Deadline, '0001-01-01') AS DATE) as Deadline, 
 		CAST(COALESCE(SubmitDate, '0001-01-01') AS DATE) as SubmitDate, 
 		Notes
@@ -716,7 +718,7 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 		&result.TUID, &result.Name, &result.Email, &result.StudyProgram, &result.Booked,
 		&result.GPA, &result.ThesisType, &result.ThesisTitle,
 		&result.ThesisStatus, &result.Semester, &result.FinalGrade, &result.RequestDate,
-		&result.ContactDate, &result.Deadline, &result.SubmitDate,
+		&result.ResponseDate, &result.RegisteredDate, &result.Deadline, &result.SubmitDate,
 		&result.Notes,
 	)
 	if err != nil {
@@ -792,7 +794,7 @@ func (dbc *DBController) UpdtThesisInfo(td ThesisFullData) error {
         UPDATE Thesis 
         SET Name=?, Email=?, StudyProgram=?, Booked=?, 
             ThesisType=?, ThesisStatus=?, Semester=?, 
-            ThesisTitle=?, GPA=?, RequestDate=?, ContactDate=?, 
+            ThesisTitle=?, GPA=?, RequestDate=?, ResponseDate=?, RegisteredDate=?,
             SubmitDate=?, Deadline=?, FinalGrade=?, Notes=?
         WHERE TUID = ?`,
 		td.Name, td.Email, td.StudyProgram, td.Booked,
@@ -800,7 +802,8 @@ func (dbc *DBController) UpdtThesisInfo(td ThesisFullData) error {
 		td.ThesisTitle,
 		convertGradeToNullFloat(td.GPA),
 		convertGoDateToSqlNullDate(td.RequestDate),
-		convertGoDateToSqlNullDate(td.ContactDate),
+		convertGoDateToSqlNullDate(td.ResponseDate),
+		convertGoDateToSqlNullDate(td.RegisteredDate),
 		convertGoDateToSqlNullDate(td.SubmitDate),
 		convertGoDateToSqlNullDate(td.Deadline),
 		convertGradeToNullFloat(td.FinalGrade),

@@ -15,7 +15,8 @@ type FieldThesisInfo struct {
 	SemesterYear      string
 	FinalGrade        string
 	RequestDate       string
-	ContactDate       string
+	ResponseDate      string
+	RegisteredDate    string
 	Deadline          string
 	SubmitDate        string
 	Supervisors       []PersonalData
@@ -37,7 +38,7 @@ func NewPersonalData() PersonalData {
 	return PersonalData{}
 }
 
-func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus, Semester string, FinalGrade float64, RequestDate, ContactDate, Deadline, SubmitDate time.Time, Supervisors []PersonalData, Examiners []PersonalData, Notes string) {
+func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus, Semester string, FinalGrade float64, RequestDate, ResponseDate, RegisteredDate, Deadline, SubmitDate time.Time, Supervisors []PersonalData, Examiners []PersonalData, Notes string) {
 	f.Tuid = Tuid
 	f.ThesisType = ThesisType
 	f.ThesisTitle = ThesisTitle
@@ -46,7 +47,8 @@ func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus, S
 	f.SemesterYear = getSemesterYear(Semester)
 	f.FinalGrade = overwriteFinalGrade(FinalGrade)
 	f.RequestDate = overwriteZeroDate(RequestDate, "")
-	f.ContactDate = overwriteZeroDate(ContactDate, "")
+	f.ResponseDate = overwriteZeroDate(ResponseDate, "")
+	f.RegisteredDate = overwriteZeroDate(RegisteredDate, "")
 	f.Deadline = overwriteZeroDate(Deadline, "")
 	f.SubmitDate = overwriteZeroDate(SubmitDate, "")
 	f.Supervisors = overwriteEmptyPD(Supervisors)

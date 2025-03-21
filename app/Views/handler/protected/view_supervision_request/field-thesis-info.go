@@ -6,32 +6,34 @@ import (
 )
 
 type FieldThesisInfo struct {
-	Tuid         string
-	ThesisType   string
-	ThesisTitle  string
-	ThesisStatus string
-	FinalGrade   string
-	RequestDate  string
-	ContactDate  string
-	Deadline     string
-	SubmitDate   string
-	Supervisors  []string
-	Examiners    []string
-	Notes        string
+	Tuid           string
+	ThesisType     string
+	ThesisTitle    string
+	ThesisStatus   string
+	FinalGrade     string
+	RequestDate    string
+	ResponseDate   string
+	RegisteredDate string
+	Deadline       string
+	SubmitDate     string
+	Supervisors    []string
+	Examiners      []string
+	Notes          string
 }
 
 func NewFieldThesisInfo() FieldThesisInfo {
 	return FieldThesisInfo{}
 }
 
-func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus string, FinalGrade float64, RequestDate, ContactDate, Deadline, SubmitDate time.Time, Supervisors []string, Examiners []string, Notes string) {
+func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus string, FinalGrade float64, RequestDate, ResponseDate, RegisteredDate, Deadline, SubmitDate time.Time, Supervisors []string, Examiners []string, Notes string) {
 	f.Tuid = Tuid
 	f.ThesisType = ThesisType
 	f.ThesisTitle = ThesisTitle
 	f.ThesisStatus = ThesisStatus
 	f.FinalGrade = overwriteFinalGrade(FinalGrade)
 	f.RequestDate = overwriteZeroDate(RequestDate, "n/a")
-	f.ContactDate = overwriteZeroDate(ContactDate, "Not contacted yet")
+	f.ResponseDate = overwriteZeroDate(ResponseDate, "Not contacted yet")
+	f.RegisteredDate = overwriteZeroDate(RegisteredDate, "Not registered yet")
 	f.Deadline = overwriteZeroDate(Deadline, "No deadline set")
 	f.SubmitDate = overwriteZeroDate(SubmitDate, "Not submitted yet")
 	f.Supervisors = overwriteEmptySlice(Supervisors, "No supervisor assigned")
