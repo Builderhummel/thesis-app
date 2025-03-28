@@ -20,7 +20,7 @@
 
       <div class="col-12 mb-3">
           <label for="gpa" class="form-label">GPA</label>
-          <input type="text" class="form-control" id="gpa" name="gpa" placeholder="Enter the GPA (x.xx)" required value="{{.StudInf.GPA}}">
+          <input type="number" min="1" max="5" step="0.01" class="form-control" id="gpa" name="gpa" placeholder="Enter the GPA (x.xx)" required value="{{.StudInf.GPA}}">
       </div>
 
       <div class="col-12 mb-3">
@@ -81,7 +81,7 @@
 
     <div class="col-12 mb-3">
         <label for="final-grade" class="form-label">Final Grade</label>
-        <input type="text" class="form-control" id="final-grade" name="final-grade" placeholder="Enter final grade (x.xx)" value="{{.ThesisInf.FinalGrade}}">
+        <input type="number" min="1" max="5" step="0.01" class="form-control" id="final-grade" name="final-grade" placeholder="Enter final grade (x.xx)" value="{{.ThesisInf.FinalGrade}}">
     </div>
 
     <hr>

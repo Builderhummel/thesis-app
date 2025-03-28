@@ -701,7 +701,8 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
     SELECT 
         TUID, Name, Email, StudyProgram,
 		COALESCE(Booked, FALSE) AS Booked,
-		GPA, ThesisType, ThesisTitle, 
+		COALESCE(GPA, -1) as GPA, 
+		ThesisType, ThesisTitle, 
         ThesisStatus,
 		COALESCE(Semester, '') as Semester,
 		COALESCE(FinalGrade, -1) as FinalGrade, 
