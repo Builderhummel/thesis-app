@@ -7,7 +7,6 @@ import (
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	view_protected_homepage "github.com/Builderhummel/thesis-app/app/Views/handler/protected/homepage"
 	view_protected_my_supervisions "github.com/Builderhummel/thesis-app/app/Views/handler/protected/my_supervisions"
-	view_protected_open_requests "github.com/Builderhummel/thesis-app/app/Views/handler/protected/open_requests"
 	"github.com/gin-gonic/gin"
 )
 
@@ -56,18 +55,6 @@ func getSummary() (view_protected_homepage.Summary, error) {
 
 	summary.SetSummary(summary_data["requested"], summary_data["contacted"], summary_data["working"])
 	return summary, nil
-}
-
-func fillTableOpenRequests() (view_protected_open_requests.TableOpenRequest, error) {
-	tor := view_protected_open_requests.NewTableOpenRequests()
-	tor_data, err := db_model.GetDataThesisTableOpenRequests()
-	if err != nil {
-		return nil, err
-	}
-	for _, row_data := range tor_data {
-		tor.AddRow(row_data["thesisType"], row_data["name"], row_data["courseOfStudy"], row_data["gpa"], row_data["requestDate"], row_data["status"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
-	}
-	return tor, nil
 }
 
 func fillTableMySupervisions(user_id string) (view_protected_my_supervisions.TableMySupervisions, error) {

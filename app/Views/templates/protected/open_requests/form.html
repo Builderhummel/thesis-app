@@ -1,0 +1,39 @@
+{{ define "protected/open_requests/form.html" }}
+<br>
+<p class="h3">Open Requests</p>
+<div class="table-responsive" style="overflow-y: auto;">
+  <table class="table table-hover align-middle" id="table_open_requests">
+    <thead class="table-light">
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Course of Study</th>
+        <th>GPA</th>
+        <th>Request Date</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range .TabOpReq}}
+      <tr>
+          <td><span class="badge {{ .ThesisTypeBadge}}">{{ .ThesisType }}</span></td>
+          <td>{{ .Name }}</td>
+          <td>{{ .CourseOfStudy }}</td>
+          <td>{{ .GPA }}</td>
+          <td>{{ .RequestDate }}</td>
+          <td><span class="badge bg-danger">{{ .Status }}</span></td>
+          <td>
+            <div class="btn-group btn-group-sm" role="group">
+              <a href="{{ .LinkEmail }}" class="btn btn-outline-primary" role="button">E</a>
+              <a href="{{ .LinkModify }}" class="btn btn-outline-primary" role="button">&#9432;</a>
+              <a href="{{ .LinkDelete }}" class="btn btn-outline-danger" role="button">D</a>
+            </div>
+          </td>
+      </tr>
+      {{ end }}
+    </tbody>
+    </table>
+</div>
+
+{{ end }}

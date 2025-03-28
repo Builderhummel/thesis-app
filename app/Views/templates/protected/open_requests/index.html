@@ -1,0 +1,18 @@
+{{ define "protected/open_requests/index.html" }}
+
+{{ template "protected/open_requests/header.html" . }}
+
+<body>
+
+{{ template "protected/common/navbar.html" . }}
+
+{{ template "protected/open_requests/content_body.html" . }}
+
+{{ template "lib_load/vendor/load_jquery_js.html" . }}
+{{ template "lib_load/vendor/load_bootstrap_js.html"}}
+{{ template "lib_load/vendor/load_datatables_js.html" . }}
+{{ template "protected/open_requests/datatables_scripts.html" . }}
+
+</body>
+
+{{ end }}
