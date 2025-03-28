@@ -6,7 +6,6 @@ import (
 	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	view_protected_homepage "github.com/Builderhummel/thesis-app/app/Views/handler/protected/homepage"
-	view_protected_my_supervisions "github.com/Builderhummel/thesis-app/app/Views/handler/protected/my_supervisions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -55,16 +54,4 @@ func getSummary() (view_protected_homepage.Summary, error) {
 
 	summary.SetSummary(summary_data["requested"], summary_data["contacted"], summary_data["working"])
 	return summary, nil
-}
-
-func fillTableMySupervisions(user_id string) (view_protected_my_supervisions.TableMySupervisions, error) {
-	tab_data, err := db_model.GetDataTableMySupervisions(user_id)
-	if err != nil {
-		return nil, err
-	}
-	tmsv := view_protected_my_supervisions.NewTableMySupervisions()
-	for _, row_data := range tab_data {
-		tmsv.AddRow(row_data["thesistype"], row_data["name"], row_data["thesistitle"], row_data["deadline"], row_data["supervisor"], row_data["semester"], row_data["thesisstatus"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
-	}
-	return tmsv, nil
 }

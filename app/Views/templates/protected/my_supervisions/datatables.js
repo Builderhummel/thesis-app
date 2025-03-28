@@ -6,7 +6,7 @@ $(document).ready(function () {
                         ("0" + now.getHours()).slice(-2) + "_" +
                         ("0" + now.getMinutes()).slice(-2);
 
-    $('#table_open_requests').DataTable({
+    $('#table_my_supervisions').DataTable({
         dom: '<"d-flex justify-content-between align-items-center mb-2"lfB>rtip',
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         buttons: [
@@ -14,7 +14,7 @@ $(document).ready(function () {
                 extend: 'csv',
                 text: '<i class="fas fa-file-csv"></i> CSV',
                 className: 'btn btn-success btn-sm',
-                filename: formattedDate + '_open_requests',
+                filename: formattedDate + '_my_supervisions',
                 exportOptions: {
                     columns: ':not(:last-child)'
                 }
@@ -23,7 +23,7 @@ $(document).ready(function () {
                 extend: 'excel',
                 text: '<i class="fas fa-file-excel"></i> Excel',
                 className: 'btn btn-success btn-sm',
-                filename: formattedDate + '_open_requests',
+                filename: formattedDate + '_my_supervisions',
                 exportOptions: {
                     columns: ':not(:last-child)'
                 }
@@ -32,7 +32,7 @@ $(document).ready(function () {
                 extend: 'pdf',
                 text: '<i class="fas fa-file-pdf"></i> PDF',
                 className: 'btn btn-danger btn-sm',
-                filename: formattedDate + '_open_requests',
+                filename: formattedDate + '_my_supervisions',
                 exportOptions: {
                     columns: ':not(:last-child)'
                 }
@@ -41,7 +41,7 @@ $(document).ready(function () {
                 extend: 'print',
                 text: '<i class="fas fa-print"></i> Print',
                 className: 'btn btn-primary btn-sm',
-                filename: formattedDate + '_open_requests',
+                filename: formattedDate + '_my_supervisions',
                 exportOptions: {
                     columns: ':not(:last-child)'
                 }
