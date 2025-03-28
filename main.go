@@ -58,6 +58,10 @@ func main() {
 	r.Static("/css/select2", "./app/static/vendor/select2/css")
 	r.Static("/js/select2", "./app/static/vendor/select2/js")
 
+	//Datatables
+	r.Static("/css/datatables", "./app/static/vendor/datatables/css")
+	r.Static("/js/datatables", "./app/static/vendor/datatables/js")
+
 	lib_controller.Router(r)
 	protected_controller.Router(r)
 	public_controller.Router(r)

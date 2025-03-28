@@ -11,6 +11,7 @@ func Router(r *gin.Engine) {
 	protected.GET("/", RenderHomepage)
 
 	protected.GET("/all", RenderAllSupervisions)
+	protected.StaticFile("/js/custom/all/datatables.js", "./app/Views/templates/protected/all_supervisions/datatables.js")
 
 	protected.GET("/add", RenderAddSupervisionRequestForm)
 	protected.POST("/add", HandleNewSupervisionRequest)

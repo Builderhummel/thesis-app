@@ -8,7 +8,10 @@
 
 {{ template "protected/all_supervisions/content_body.html" . }}
 
+{{ template "lib_load/vendor/load_jquery_js.html" . }}
 {{ template "lib_load/vendor/load_bootstrap_js.html"}}
+{{ template "lib_load/vendor/load_datatables_js.html" . }}
+{{ template "protected/all_supervisions/datatables_scripts.html" . }}
 
 </body>
 
