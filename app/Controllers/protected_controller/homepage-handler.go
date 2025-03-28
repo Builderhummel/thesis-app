@@ -6,6 +6,8 @@ import (
 	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	view_protected_homepage "github.com/Builderhummel/thesis-app/app/Views/handler/protected/homepage"
+	view_protected_my_supervisions "github.com/Builderhummel/thesis-app/app/Views/handler/protected/my_supervisions"
+	view_protected_open_requests "github.com/Builderhummel/thesis-app/app/Views/handler/protected/open_requests"
 	"github.com/gin-gonic/gin"
 )
 
@@ -56,8 +58,8 @@ func getSummary() (view_protected_homepage.Summary, error) {
 	return summary, nil
 }
 
-func fillTableOpenRequests() (view_protected_homepage.TableOpenRequest, error) {
-	tor := view_protected_homepage.NewTableOpenRequests()
+func fillTableOpenRequests() (view_protected_open_requests.TableOpenRequest, error) {
+	tor := view_protected_open_requests.NewTableOpenRequests()
 	tor_data, err := db_model.GetDataThesisTableOpenRequests()
 	if err != nil {
 		return nil, err
@@ -68,12 +70,12 @@ func fillTableOpenRequests() (view_protected_homepage.TableOpenRequest, error) {
 	return tor, nil
 }
 
-func fillTableMySupervisions(user_id string) (view_protected_homepage.TableMySupervisions, error) {
+func fillTableMySupervisions(user_id string) (view_protected_my_supervisions.TableMySupervisions, error) {
 	tab_data, err := db_model.GetDataTableMySupervisions(user_id)
 	if err != nil {
 		return nil, err
 	}
-	tmsv := view_protected_homepage.NewTableMySupervisions()
+	tmsv := view_protected_my_supervisions.NewTableMySupervisions()
 	for _, row_data := range tab_data {
 		tmsv.AddRow(row_data["thesistype"], row_data["name"], row_data["thesistitle"], row_data["deadline"], row_data["supervisor"], row_data["semester"], row_data["thesisstatus"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
 	}

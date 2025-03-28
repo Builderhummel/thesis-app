@@ -1,6 +1,6 @@
-package view_protected_homepage
+package view_protected_common_badges
 
-func setThesisTypeBadge(thesisType string) string {
+func SetThesisTypeBadge(thesisType string) string {
 	switch thesisType {
 	case "BA":
 		return "bg-primary"
@@ -15,7 +15,7 @@ func setThesisTypeBadge(thesisType string) string {
 
 // request, contacted, registered, working, completed, dropped
 // TODO: Change colors
-func setStatusBadge(statusBadge string) string {
+func SetStatusBadge(statusBadge string) string {
 	switch statusBadge {
 	case "request":
 		return "bg-danger"

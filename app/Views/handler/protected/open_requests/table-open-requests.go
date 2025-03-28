@@ -1,4 +1,8 @@
-package view_protected_homepage
+package view_protected_open_requests
+
+import (
+	view_protected_common_badges "github.com/Builderhummel/thesis-app/app/Views/handler/protected/common/badges"
+)
 
 type TableOpenRequest []TableRowOpenRequest
 
@@ -25,7 +29,7 @@ func (t *TableOpenRequest) AddRow(ThesisType, Name, ThesisTitle, RequestDate, Se
 
 func NewTableRowOpenRequest(ThesisType, Name, CourseOfStudy, GPA, RequestDate, Status, LinkEmail, LinkModify, LinkDelete string) TableRowOpenRequest {
 	return TableRowOpenRequest{
-		ThesisTypeBadge: setThesisTypeBadge(ThesisType),
+		ThesisTypeBadge: view_protected_common_badges.SetThesisTypeBadge(ThesisType),
 		ThesisType:      ThesisType,
 		Name:            Name,
 		CourseOfStudy:   CourseOfStudy,

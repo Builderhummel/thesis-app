@@ -1,4 +1,8 @@
-package view_protected_homepage
+package view_protected_my_supervisions
+
+import (
+	view_protected_common_badges "github.com/Builderhummel/thesis-app/app/Views/handler/protected/common/badges"
+)
 
 type TableMySupervisions []TableRowMySupervisions
 
@@ -27,7 +31,7 @@ func (t *TableMySupervisions) AddRow(ThesisType, Name, ThesisTitle, DeadlineDate
 
 func NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate, Supervisor, Semester, Status, LinkEmail, LinkModify, LinkDelete string) TableRowMySupervisions {
 	return TableRowMySupervisions{
-		ThesisTypeBadge: setThesisTypeBadge(ThesisType),
+		ThesisTypeBadge: view_protected_common_badges.SetThesisTypeBadge(ThesisType),
 		ThesisType:      ThesisType,
 		Name:            Name,
 		ThesisTitle:     ThesisTitle,
@@ -35,7 +39,7 @@ func NewTableRowMySupervisions(ThesisType, Name, ThesisTitle, DeadlineDate, Supe
 		Supervisor:      Supervisor,
 		Semester:        Semester,
 		Status:          Status,
-		StatusBadge:     setStatusBadge(Status),
+		StatusBadge:     view_protected_common_badges.SetStatusBadge(Status),
 		LinkEmail:       LinkEmail,
 		LinkModify:      LinkModify,
 		LinkDelete:      LinkDelete,
