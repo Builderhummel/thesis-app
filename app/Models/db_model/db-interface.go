@@ -1,11 +1,29 @@
 package db_model
 
+import (
+	"fmt"
+	"time"
+)
+
 var dbSession *DBController
 
 // TODO: Check for better error handling in whole file
 func Init() {
 	dbSession = &DBController{}
-	dbSession.OpenConnection()
+	for {
+		err := dbSession.OpenConnection()
+		if err != nil {
+			fmt.Printf("Failed to connect to the database: %v. Retrying in 5s...\n", err)
+		} else {
+			if pingErr := dbSession.db.Ping(); pingErr != nil {
+				fmt.Printf("Database ping failed: %v. Retrying in 5s...\n", pingErr)
+			} else {
+				fmt.Println("Database connection established.")
+				break
+			}
+		}
+		time.Sleep(5 * time.Second)
+	}
 
 	// Check if database is initialized
 	check, err := dbSession.CheckIfDatabaseIsInitialized()

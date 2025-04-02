@@ -18,14 +18,14 @@ type DBController struct {
 	db *sql.DB
 }
 
-func (dbc *DBController) OpenConnection() (*sql.DB, error) {
+func (dbc *DBController) OpenConnection() error {
 	var err error
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", Config.DBUsername, Config.DBPassword, Config.DBIP, Config.DBPort, Config.DBName)
 	dbc.db, err = sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return dbc.db, nil
+	return nil
 }
 
 func (dbc *DBController) CloseConnection() error {
