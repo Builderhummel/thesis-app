@@ -9,6 +9,7 @@ $(document).ready(function () {
     $('#all_supervisions').DataTable({
         dom: '<"d-flex justify-content-between align-items-center mb-2"lfB>rtip',
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        order: [],
         buttons: [
             {
                 extend: 'csv',
