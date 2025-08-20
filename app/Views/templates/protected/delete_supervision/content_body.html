@@ -1,0 +1,48 @@
+{{ define "protected/view_delete_supervision_request/content_body.html" }}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Supervision Request Details</h2>
+                    
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Name</dt>
+                        <dd class="col-sm-8">{{ .VDelData.Name }}</dd>
+
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">{{ .VDelData.Email }}</dd>
+
+                        <dt class="col-sm-4">Thesis Title</dt>
+                        <dd class="col-sm-8">{{ .VDelData.ThesisInfo.ThesisTitle }}</dd>
+                        
+                        <dt class="col-sm-4">Thesis ID</dt>
+                        <dd class="col-sm-8">{{ .VDelData.ThesisInfo.Tuid }}</dd>
+                    </dl>
+
+                    <!-- Danger Alert -->
+                    <div class="alert alert-danger mt-5 mb-4 text-center" role="alert">
+                        ⚠️ <strong>ARE YOU SURE THAT YOU WANT TO DELETE THIS THESIS REQUEST?</strong> ⚠️
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-2">
+                        <form method="POST" action="/delete?tuid={{ .VDelData.ThesisInfo.Tuid }}" class="me-2">
+                            <button type="submit" class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                        <form method="GET" action="/view">
+                            <input type="hidden" name="tuid" value="{{ .VDelData.ThesisInfo.Tuid }}">
+                            <button type="submit" class="btn btn-secondary">
+                                Abort
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ end }}

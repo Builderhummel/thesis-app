@@ -22,6 +22,9 @@ func Router(r *gin.Engine) {
 	protected.GET("/add", RenderAddSupervisionRequestForm)
 	protected.POST("/add", HandleNewSupervisionRequest)
 
+	protected.GET("/delete", RenderDeleteSupervisionRequestForm)
+	protected.POST("/delete", HandleDeleteThesisRequest)
+
 	protected.GET("/view", RenderViewSupervisionRequestForm)
 
 	protected.GET("/edit", RenderEditSupervisionRequestForm)

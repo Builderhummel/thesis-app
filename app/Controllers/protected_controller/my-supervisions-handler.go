@@ -35,7 +35,7 @@ func fillTableMySupervisions(user_id string) (view_protected_my_supervisions.Tab
 	}
 	tmsv := view_protected_my_supervisions.NewTableMySupervisions()
 	for _, row_data := range tab_data {
-		tmsv.AddRow(row_data["thesistype"], row_data["name"], row_data["thesistitle"], row_data["deadline"], row_data["supervisor"], row_data["semester"], row_data["thesisstatus"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
+		tmsv.AddRow(row_data["thesistype"], row_data["name"], row_data["thesistitle"], row_data["deadline"], row_data["supervisor"], row_data["semester"], row_data["thesisstatus"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "/delete?tuid="+row_data["tuid"])
 	}
 	return tmsv, nil
 }

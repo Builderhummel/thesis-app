@@ -180,3 +180,15 @@ func UpdateThesisInfo(td ThesisFullData) error {
 	}
 	return nil
 }
+
+func DeleteThesisRequest(tuid string) error {
+	err := dbSession.DelThesisRequest(tuid)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func CheckIfThesisIsBooked(thesisID string) (bool, error) {
+	return dbSession.ChkIfThesisIsBooked(thesisID)
+}

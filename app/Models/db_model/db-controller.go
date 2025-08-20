@@ -928,6 +928,56 @@ func (dbc *DBController) UpdtThesisInfo(td ThesisFullData) error {
 	return err
 }
 
+func (dbc *DBController) DelThesisRequest(thesisID string) error {
+	tx, err := dbc.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() error {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			return fmt.Errorf("transaction rollback due to panic: %v", p)
+		}
+		return nil
+	}()
+
+	// Delete from junction tables first (to avoid foreign key errors)
+	_, err = tx.Exec("DELETE FROM SupervisorJunction WHERE TUID = ?", thesisID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM ExaminerJunction WHERE TUID = ?", thesisID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// If you have other relations referencing Thesis by TUID, add their deletion here
+
+	// Delete the thesis itself
+	_, err = tx.Exec("DELETE FROM Thesis WHERE TUID = ?", thesisID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+func (dbc *DBController) ChkIfThesisIsBooked(thesisID string) (bool, error) {
+	var booked bool
+	err := dbc.db.QueryRow("SELECT Booked FROM Thesis WHERE TUID = ?", thesisID).Scan(&booked)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil // Thesis not found, so not booked
+		}
+		return false, fmt.Errorf("error checking if thesis is booked: %v", err)
+	}
+	return booked, nil
+}
+
 func (dbc *DBController) updtJunction(tx *sql.Tx, thesisID string, people []PersonalData, junctionTable string) error {
 	_, err := tx.Exec(fmt.Sprintf("DELETE FROM %s WHERE TUID = ?", junctionTable), thesisID) // Not insecure, bc fixed variable
 	if err != nil {

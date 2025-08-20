@@ -26,7 +26,7 @@ func fillTableAllSupervisions() (view_protected_all_supervisions.TableAllSupervi
 	}
 	tasv := view_protected_all_supervisions.NewTableMySupervisions()
 	for _, row_data := range tab_data {
-		tasv.AddRow(row_data["thesisType"], row_data["name"], row_data["thesisTitle"], row_data["deadline"], row_data["supervisor"], row_data["semester"], row_data["status"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "#")
+		tasv.AddRow(row_data["thesisType"], row_data["name"], row_data["thesisTitle"], row_data["deadline"], row_data["supervisor"], row_data["semester"], row_data["status"], "mailto:"+row_data["email"], "/view?tuid="+row_data["tuid"], "/delete?tuid="+row_data["tuid"])
 	}
 	return tasv, nil
 }
