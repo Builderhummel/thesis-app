@@ -35,4 +35,6 @@ func Router(r *gin.Engine) {
 
 	protected.GET("/edit_user", RenderEditUser)
 	protected.POST("/edit_user", HandlePostEditUser)
+
+	protected.GET("/export", HandleExport)
 }

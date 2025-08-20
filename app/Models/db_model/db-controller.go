@@ -774,6 +774,106 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 	return result, nil
 }
 
+func (dbc *DBController) GtAllDataFullSupervision() ([]*ThesisFullData, error) {
+	// 1. Query all thesis main data
+	mainQuery := `
+		SELECT 
+			TUID, Name, Email, StudyProgram,
+			COALESCE(Booked, FALSE) AS Booked,
+			COALESCE(GPA, -1) as GPA, 
+			ThesisType, ThesisTitle, 
+			ThesisStatus,
+			COALESCE(Semester, '') as Semester,
+			COALESCE(FinalGrade, -1) as FinalGrade, 
+			CAST(COALESCE(RequestDate, '0001-01-01') AS DATE) as RequestDate, 
+			CAST(COALESCE(ResponseDate, '0001-01-01') AS DATE) as ResponseDate, 
+			CAST(COALESCE(RegisteredDate, '0001-01-01') AS DATE) as RegisteredDate, 
+			CAST(COALESCE(Deadline, '0001-01-01') AS DATE) as Deadline, 
+			CAST(COALESCE(SubmitDate, '0001-01-01') AS DATE) as SubmitDate, 
+			Notes
+		FROM Thesis
+	`
+	rows, err := dbc.db.Query(mainQuery)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching thesis data: %v", err)
+	}
+	defer rows.Close()
+
+	// Use map for quick lookups by TUID
+	thesisMap := make(map[string]*ThesisFullData)
+	var thesisList []*ThesisFullData
+
+	for rows.Next() {
+		result := &ThesisFullData{}
+		err := rows.Scan(
+			&result.TUID, &result.Name, &result.Email, &result.StudyProgram, &result.Booked,
+			&result.GPA, &result.ThesisType, &result.ThesisTitle,
+			&result.ThesisStatus, &result.Semester, &result.FinalGrade, &result.RequestDate,
+			&result.ResponseDate, &result.RegisteredDate, &result.Deadline, &result.SubmitDate,
+			&result.Notes,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("error scanning thesis: %v", err)
+		}
+		thesisMap[result.TUID] = result
+		thesisList = append(thesisList, result)
+	}
+
+	// 2. Query all supervisors for all theses
+	supervisorQuery := `
+		SELECT sj.TUID, pd.PDUID, pd.Name, pd.Email
+		FROM SupervisorJunction sj
+		JOIN PersonalData pd ON pd.PDUID = sj.PDUID
+	`
+	supRows, err := dbc.db.Query(supervisorQuery)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching supervisors: %v", err)
+	}
+	defer supRows.Close()
+
+	for supRows.Next() {
+		var tuid, pduid, name, email string
+		if err := supRows.Scan(&tuid, &pduid, &name, &email); err != nil {
+			return nil, fmt.Errorf("error scanning supervisor: %v", err)
+		}
+		if thesis, ok := thesisMap[tuid]; ok {
+			thesis.Supervisors = append(thesis.Supervisors, PersonalData{
+				PDUid: pduid,
+				Name:  name,
+				Email: email,
+			})
+		}
+	}
+
+	// 3. Query all examiners for all theses
+	examinerQuery := `
+		SELECT ej.TUID, pd.PDUID, pd.Name, pd.Email
+		FROM ExaminerJunction ej
+		JOIN PersonalData pd ON pd.PDUID = ej.PDUID
+	`
+	examRows, err := dbc.db.Query(examinerQuery)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching examiners: %v", err)
+	}
+	defer examRows.Close()
+
+	for examRows.Next() {
+		var tuid, pduid, name, email string
+		if err := examRows.Scan(&tuid, &pduid, &name, &email); err != nil {
+			return nil, fmt.Errorf("error scanning examiner: %v", err)
+		}
+		if thesis, ok := thesisMap[tuid]; ok {
+			thesis.Examiners = append(thesis.Examiners, PersonalData{
+				PDUid: pduid,
+				Name:  name,
+				Email: email,
+			})
+		}
+	}
+
+	return thesisList, nil
+}
+
 func (dbc *DBController) InsrtNwThsisRequest(name, email, courseOfStudy, thesisType, thesisTitle, gpa, requestDate, notes string) error {
 	_, err := dbc.db.Exec(`
 		INSERT INTO Thesis (Name, Email, StudyProgram, ThesisType, ThesisStatus, ThesisTitle, GPA, RequestDate, Notes)

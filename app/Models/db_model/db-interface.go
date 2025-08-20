@@ -157,6 +157,14 @@ func GetDataFullSupervision(thesisID string) (*ThesisFullData, error) {
 	return data, nil
 }
 
+func GetAllDataFullSupervison() ([]*ThesisFullData, error) {
+	data, err := dbSession.GtAllDataFullSupervision()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func InsertNewThesisRequest(name, email, courseOfStudy, thesisType, thesisTitle, gpa, contactDate, notes string) error {
 	err := dbSession.InsrtNwThsisRequest(name, email, courseOfStudy, thesisType, thesisTitle, gpa, contactDate, notes)
 	if err != nil {
