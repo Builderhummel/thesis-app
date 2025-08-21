@@ -3,6 +3,8 @@ package db_model
 import (
 	"fmt"
 	"time"
+
+	"github.com/Builderhummel/thesis-app/app/Constants/roles"
 )
 
 var dbSession *DBController
@@ -47,6 +49,14 @@ func VerifyLoginUser(userid string) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+func GetUserRoleByLoginHandle(userid string) (roles.Role, error) {
+	role, err := dbSession.GtUsrRleByLgnHndle(userid)
+	if err != nil {
+		return "", err
+	}
+	return role, nil
 }
 
 func CheckUserActive(userid string) (bool, error) {

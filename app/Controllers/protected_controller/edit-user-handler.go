@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	view_protected_edit_user "github.com/Builderhummel/thesis-app/app/Views/handler/protected/edit_user"
 	"github.com/gin-gonic/gin"
@@ -33,8 +34,8 @@ func RenderEditUser(c *gin.Context) {
 	fUser := view_protected_edit_user.NewFieldUser()
 	fUser.SetUser(userData.PDUid, userData.Name, userData.Email, userData.Handle, string(userData.Role), userData.IsActive, userData.IsSupervisor, userData.IsExaminer)
 
-	c.HTML(200, "protected/edit_user/index.html", gin.H{
-		"Navbar": renderNavbar(),
+	c.HTML(200, "admin/edit_user/index.html", gin.H{
+		"Navbar": renderNavbar(auth_controller.GetUserRoleFromContext(c)),
 		"User":   fUser,
 	})
 }
@@ -68,5 +69,5 @@ func HandlePostEditUser(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusSeeOther, "/users")
+	c.Redirect(http.StatusSeeOther, "/admin/users")
 }

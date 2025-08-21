@@ -23,7 +23,7 @@ func RenderMySupervisions(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "protected/my_supervisions/index.html", gin.H{
-		"Navbar":    renderNavbar(),
+		"Navbar":    renderNavbar(auth_controller.GetUserRoleFromContext(c)),
 		"TabMySupV": tabMySupV,
 	})
 }

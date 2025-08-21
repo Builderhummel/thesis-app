@@ -1,13 +1,14 @@
 package protected_controller
 
 import (
+	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	"github.com/gin-gonic/gin"
 )
 
 func RenderNewUser(c *gin.Context) {
-	c.HTML(200, "protected/new_user/index.html", gin.H{
-		"Navbar": renderNavbar(),
+	c.HTML(200, "admin/new_user/index.html", gin.H{
+		"Navbar": renderNavbar(auth_controller.GetUserRoleFromContext(c)),
 	})
 }
 
@@ -26,5 +27,5 @@ func HandlePostNewUser(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(302, "/users")
+	c.Redirect(302, "/admin/users")
 }

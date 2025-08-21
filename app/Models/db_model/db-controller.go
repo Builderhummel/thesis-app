@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Builderhummel/thesis-app/app/Constants/roles"
 	"github.com/Builderhummel/thesis-app/app/config"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -138,6 +139,16 @@ func (dbc *DBController) GetLoginHandleFromDB(handle string) (string, error) {
 		return "", err
 	}
 	return user, nil
+}
+
+func (dbc *DBController) GtUsrRleByLgnHndle(userid string) (roles.Role, error) {
+	var roleStr string
+	err := dbc.db.QueryRow("SELECT Role FROM Account WHERE LoginHandle = ?", userid).Scan(&roleStr)
+	if err != nil {
+		return "", err
+	}
+	role := roles.Role(roleStr)
+	return role, nil
 }
 
 func (dbc *DBController) ChkUserActive(handle string) (bool, error) {

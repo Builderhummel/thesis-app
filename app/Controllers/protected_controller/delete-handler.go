@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	view_protected_delete_supervision "github.com/Builderhummel/thesis-app/app/Views/handler/protected/delete_supervision"
 	"github.com/gin-gonic/gin"
@@ -43,7 +44,7 @@ func RenderDeleteSupervisionRequestForm(c *gin.Context) {
 	)
 
 	c.HTML(200, "protected/view_delete_supervision_request/index.html", gin.H{
-		"Navbar":   renderNavbar(),
+		"Navbar":   renderNavbar(auth_controller.GetUserRoleFromContext(c)),
 		"VDelData": vdeleteData,
 	})
 }

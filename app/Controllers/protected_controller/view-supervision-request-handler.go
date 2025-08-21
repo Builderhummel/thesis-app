@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	view_protected_view_supervision_request "github.com/Builderhummel/thesis-app/app/Views/handler/protected/view_supervision_request"
 	"github.com/gin-gonic/gin"
@@ -39,7 +40,7 @@ func RenderViewSupervisionRequestForm(c *gin.Context) {
 	thesisInf.SetInfo(tuid, tfd.ThesisType, tfd.ThesisTitle, tfd.ThesisStatus, tfd.FinalGrade, tfd.RequestDate, tfd.ResponseDate, tfd.RegisteredDate, tfd.Deadline, tfd.SubmitDate, getSupervisorsSliceFromPersonalData(tfd.Supervisors), getSupervisorsSliceFromPersonalData(tfd.Examiners), tfd.Notes)
 
 	c.HTML(http.StatusOK, "protected/view_supervision_request/index.html", gin.H{
-		"Navbar":    renderNavbar(),
+		"Navbar":    renderNavbar(auth_controller.GetUserRoleFromContext(c)),
 		"StudInf":   studInf,
 		"ThesisInf": thesisInf,
 	})

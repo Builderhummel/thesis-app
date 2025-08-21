@@ -3,6 +3,7 @@ package protected_controller
 import (
 	"net/http"
 
+	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +21,7 @@ type SupervisionRequestForm struct {
 
 func RenderAddSupervisionRequestForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "protected/add_supervision_request/index.html", gin.H{
-		"Navbar": renderNavbar(),
+		"Navbar": renderNavbar(auth_controller.GetUserRoleFromContext(c)),
 	})
 }
 
