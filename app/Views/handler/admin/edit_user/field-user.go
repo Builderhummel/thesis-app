@@ -1,4 +1,4 @@
-package view_protected_edit_user
+package view_admin_edit_user
 
 type FieldUser struct {
 	PDUID        string

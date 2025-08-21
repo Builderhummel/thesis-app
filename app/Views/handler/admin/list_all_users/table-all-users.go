@@ -1,4 +1,4 @@
-package view_protected_listallusers
+package view_admin_listallusers
 
 type TableRowAllUsers struct {
 	PDUID        string

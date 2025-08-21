@@ -5,7 +5,7 @@ import (
 
 	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
-	listallusers "github.com/Builderhummel/thesis-app/app/Views/handler/protected/list_all_users"
+	listallusers "github.com/Builderhummel/thesis-app/app/Views/handler/admin/list_all_users"
 	"github.com/gin-gonic/gin"
 )
 
