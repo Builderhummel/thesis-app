@@ -20,7 +20,7 @@ func RenderListAllUsers(c *gin.Context) {
 
 	tabAllUsrs := listallusers.NewTableAllUsers()
 	for _, user := range allUsers {
-		tabAllUsrs.AddRow(user.PDUid, user.Name, user.Email, user.Handle, user.IsActive, user.IsSupervisor, user.IsExaminer)
+		tabAllUsrs.AddRow(user.PDUid, user.Name, user.Email, user.Handle, string(user.Role), user.IsActive, user.IsSupervisor, user.IsExaminer)
 	}
 
 	c.HTML(http.StatusOK, "protected/list_all_users/index.html", gin.H{

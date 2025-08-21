@@ -31,6 +31,7 @@
                   </div>
               </div>
 
+
               <div class="row mb-3">
                   <div class="col-md-4">
                       <div class="form-check">
@@ -49,6 +50,15 @@
                               Is Examiner
                           </label>
                       </div>
+                  </div>
+                  <div class="col-md-4">
+                      <label for="role" class="form-label">Role</label>
+                      <select class="form-select" id="role" name="role">
+                          <option value="default" {{if eq .User.Role "default"}}selected{{end}}>Default</option>
+                          <option value="researcher" {{if eq .User.Role "researcher"}}selected{{end}}>Researcher</option>
+                          <option value="management" {{if eq .User.Role "management"}}selected{{end}}>Management</option>
+                          <option value="administrator" {{if eq .User.Role "administrator"}}selected{{end}}>Administrator</option>
+                      </select>
                   </div>
               </div>
 
