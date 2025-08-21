@@ -97,16 +97,16 @@ func GetAllExaminers() ([]PersonalData, error) {
 	return data, nil
 }
 
-func InsertNewUser(name, email, handle string, active, isSupervisor, isExaminer bool) error {
-	err := dbSession.InsrtNwUsr(name, email, handle, active, isSupervisor, isExaminer)
+func InsertNewUser(name, email, handle, role string, active, isSupervisor, isExaminer bool) error {
+	err := dbSession.InsrtNwUsr(name, email, handle, role, active, isSupervisor, isExaminer)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func UpdateFullUser(puid, name, email, handle string, active, isSupervisor, isExaminer bool) error {
-	err := dbSession.UptFullUsr(puid, name, email, handle, active, isSupervisor, isExaminer)
+func UpdateFullUser(puid, name, email, handle, role string, active, isSupervisor, isExaminer bool) error {
+	err := dbSession.UptFullUsr(puid, name, email, handle, role, active, isSupervisor, isExaminer)
 	if err != nil {
 		return err
 	}

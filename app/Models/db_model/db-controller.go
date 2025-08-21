@@ -78,6 +78,7 @@ func (dbc *DBController) InitDatabase() error {
 			PDUID INT,
 			LoginHandle VARCHAR(255),
 			Active BOOLEAN,
+			Role VARCHAR(255),
 			FOREIGN KEY (PDUID) REFERENCES PersonalData(PDUID)
 		)
 	`)
@@ -148,6 +149,7 @@ func (dbc *DBController) ChkUserActive(handle string) (bool, error) {
 	return active, nil
 }
 
+// TODO: Refactor (only used when logging in)
 func (dbc *DBController) UpdtUser(handle, name, email string) error {
 	_, err := dbc.db.Exec("UPDATE PersonalData pd JOIN Account a ON pd.PDUID = a.PDUID SET pd.Name = ?, pd.Email = ? WHERE a.LoginHandle = ?", name, email, handle)
 	if err != nil {
@@ -158,14 +160,15 @@ func (dbc *DBController) UpdtUser(handle, name, email string) error {
 
 func (dbc *DBController) GtAllUsrs() ([]PersonalData, error) {
 	query := `
-    SELECT 
-        COALESCE(pd.PDUID, ''),
-        COALESCE(pd.Name, ''),
-        COALESCE(pd.Email, ''),
-        COALESCE(a.LoginHandle, ''),
-        COALESCE(a.Active, FALSE),
-        COALESCE(pd.IsSupervisor, FALSE),
-        COALESCE(pd.IsExaminer, FALSE)
+	SELECT 
+		COALESCE(pd.PDUID, ''),
+		COALESCE(pd.Name, ''),
+		COALESCE(pd.Email, ''),
+		COALESCE(a.Role, ''),
+		COALESCE(a.LoginHandle, ''),
+		COALESCE(a.Active, FALSE),
+		COALESCE(pd.IsSupervisor, FALSE),
+		COALESCE(pd.IsExaminer, FALSE)
     FROM 
         PersonalData pd
     LEFT JOIN 
@@ -185,6 +188,7 @@ func (dbc *DBController) GtAllUsrs() ([]PersonalData, error) {
 			&user.PDUid,
 			&user.Name,
 			&user.Email,
+			&user.Role,
 			&user.Handle,
 			&user.IsActive,
 			&user.IsSupervisor,
@@ -205,14 +209,15 @@ func (dbc *DBController) GtAllUsrs() ([]PersonalData, error) {
 
 func (dbc *DBController) GtUsrByPUID(puid string) (PersonalData, error) {
 	query := `
-    SELECT 
-        COALESCE(pd.PDUID, ''),
-        COALESCE(pd.Name, ''),
-        COALESCE(pd.Email, ''),
-        COALESCE(a.LoginHandle, ''),
-        COALESCE(a.Active, FALSE),
-        COALESCE(pd.IsSupervisor, FALSE),
-        COALESCE(pd.IsExaminer, FALSE)
+	SELECT 
+		COALESCE(pd.PDUID, ''),
+		COALESCE(pd.Name, ''),
+		COALESCE(pd.Email, ''),
+		COALESCE(a.Role, ''),
+		COALESCE(a.LoginHandle, ''),
+		COALESCE(a.Active, FALSE),
+		COALESCE(pd.IsSupervisor, FALSE),
+		COALESCE(pd.IsExaminer, FALSE)
     FROM 
         PersonalData pd
     LEFT JOIN 
@@ -222,7 +227,7 @@ func (dbc *DBController) GtUsrByPUID(puid string) (PersonalData, error) {
     `
 
 	var user PersonalData
-	err := dbc.db.QueryRow(query, puid).Scan(&user.PDUid, &user.Name, &user.Email, &user.Handle, &user.IsActive, &user.IsSupervisor, &user.IsExaminer)
+	err := dbc.db.QueryRow(query, puid).Scan(&user.PDUid, &user.Name, &user.Email, &user.Role, &user.Handle, &user.IsActive, &user.IsSupervisor, &user.IsExaminer)
 	if err != nil {
 		return PersonalData{}, fmt.Errorf("error fetching user: %v", err)
 	}
@@ -291,7 +296,7 @@ func (dbc *DBController) GtUsrPuidFromUserId(user_id string) (string, error) {
 	return puid, nil
 }
 
-func (dbc *DBController) InsrtNwUsr(name, email, loginHandle string, active, isSupervisor, isExaminer bool) error {
+func (dbc *DBController) InsrtNwUsr(name, email, loginHandle, role string, active, isSupervisor, isExaminer bool) error {
 	tx, err := dbc.db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
@@ -315,11 +320,11 @@ func (dbc *DBController) InsrtNwUsr(name, email, loginHandle string, active, isS
 	}
 
 	query2 := `
-		INSERT INTO Account (PDUID, LoginHandle, Active)
-		VALUES (?, ?, ?);
+		INSERT INTO Account (PDUID, LoginHandle, Role, Active)
+		VALUES (?, ?, ?, ?);
 	`
 
-	_, err = tx.Exec(query2, lastInsertID, loginHandle, active)
+	_, err = tx.Exec(query2, lastInsertID, loginHandle, role, active)
 	if err != nil {
 		_ = tx.Rollback()
 		return fmt.Errorf("failed to insert into Account: %w", err)
@@ -332,7 +337,7 @@ func (dbc *DBController) InsrtNwUsr(name, email, loginHandle string, active, isS
 	return nil
 }
 
-func (dbc *DBController) UptFullUsr(puid, name, email, loginHandle string, active, isSupervisor, isExaminer bool) error {
+func (dbc *DBController) UptFullUsr(puid, name, email, loginHandle, role string, active, isSupervisor, isExaminer bool) error {
 	tx, err := dbc.db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
@@ -359,12 +364,13 @@ func (dbc *DBController) UptFullUsr(puid, name, email, loginHandle string, activ
 		UPDATE Account
 		SET 
 			LoginHandle = ?,
+			Role = ?,
 			Active = ?
 		WHERE 
 			PDUID = ?;
 	`
 
-	_, err = tx.Exec(query2, loginHandle, active, puid)
+	_, err = tx.Exec(query2, loginHandle, role, active, puid)
 	if err != nil {
 		_ = tx.Rollback()
 		return fmt.Errorf("failed to update Account: %w", err)

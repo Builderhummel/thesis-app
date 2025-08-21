@@ -45,6 +45,7 @@ func HandlePostEditUser(c *gin.Context) {
 	name := c.PostForm("name")
 	email := c.PostForm("email")
 	handle := c.PostForm("handle")
+	role := c.PostForm("role")
 	active := c.PostForm("active") == "on"
 	isSupervisor := c.PostForm("isSupervisor") == "on"
 	isExaminer := c.PostForm("isExaminer") == "on"
@@ -61,7 +62,7 @@ func HandlePostEditUser(c *gin.Context) {
 		return
 	}
 
-	err := db_model.UpdateFullUser(puid, name, email, handle, active, isSupervisor, isExaminer)
+	err := db_model.UpdateFullUser(puid, name, email, handle, role, active, isSupervisor, isExaminer)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating user" + err.Error()})
 		return
