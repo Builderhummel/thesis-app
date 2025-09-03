@@ -1,9 +1,8 @@
 package auth_controller
 
 import (
+	"fmt"
 	"log"
-	"regexp"
-	"strings"
 
 	"github.com/go-ldap/ldap/v3"
 )
@@ -18,16 +17,18 @@ func (auser *AuthUser) LDAP_authenticate(username, password string) error {
 	}
 	defer l.Close()
 
-	userdn := "uid=" + username + "," + ldapdn
+	userdn := "uid=" + ldap.EscapeDN(username) + "," + ldapdn
 	err = l.Bind(userdn, password)
 	if err != nil {
 		return err
 	}
 
+	filter := fmt.Sprintf("(uid=%s)", ldap.EscapeFilter(username))
+
 	searchRequest := ldap.NewSearchRequest(
 		ldapdn,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
-		"(uid="+username+")",
+		filter,
 		[]string{},
 		nil,
 	)
@@ -49,38 +50,4 @@ func (auser *AuthUser) LDAP_authenticate(username, password string) error {
 	}
 
 	return nil
-}
-
-func SanitizeLDAPInput(input string) string {
-	if input == "" {
-		return ""
-	}
-
-	specialChars := map[string]string{
-		",":  "\\,",
-		"\\": "\\\\",
-		"/":  "\\/",
-		"#":  "\\#",
-		"+":  "\\+",
-		"<":  "\\<",
-		">":  "\\>",
-		";":  "\\;",
-		"\"": "\\\"",
-		"=":  "\\=",
-	}
-
-	sanitized := input
-
-	for char, replacement := range specialChars {
-		sanitized = strings.ReplaceAll(sanitized, char, replacement)
-	}
-
-	sanitized = regexp.MustCompile(`[\x00-\x1F\x7F]`).ReplaceAllString(sanitized, "")
-
-	const maxLength = 255
-	if len(sanitized) > maxLength {
-		sanitized = sanitized[:maxLength]
-	}
-
-	return sanitized
 }

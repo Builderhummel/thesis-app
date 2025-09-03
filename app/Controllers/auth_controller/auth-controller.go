@@ -17,8 +17,8 @@ type AuthUser struct {
 func Login(c *gin.Context) {
 	auser := AuthUser{}
 
-	userid := SanitizeLDAPInput(c.PostForm("userid"))
-	password := SanitizeLDAPInput(c.PostForm("password"))
+	userid := c.PostForm("userid")
+	password := c.PostForm("password")
 
 	println("Username:" + userid)
 
