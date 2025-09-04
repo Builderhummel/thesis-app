@@ -22,15 +22,24 @@ func GenerateToken(user_id string) (string, error) {
 
 func TokenValid(c *gin.Context) error {
 	tokenString := ExtractToken(c)
-	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(Config.JWTSecret), nil
 	})
+
 	if err != nil {
 		return err
 	}
+
+	// Extract claims and set user_id to context
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		if userID, ok := claims["user_id"]; ok {
+			c.Set("user_id", userID)
+		}
+	}
+
 	return nil
 }
 

@@ -1,6 +1,10 @@
 package db_model
 
-import "time"
+import (
+	"time"
+
+	"github.com/Builderhummel/thesis-app/app/Constants/roles"
+)
 
 type ThesisFullData struct {
 	TUID           string
@@ -29,6 +33,7 @@ type PersonalData struct {
 	Name         string
 	Email        string
 	Handle       string
+	Role         roles.Role
 	IsActive     bool
 	IsSupervisor bool
 	IsExaminer   bool

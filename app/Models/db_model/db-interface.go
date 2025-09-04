@@ -3,6 +3,8 @@ package db_model
 import (
 	"fmt"
 	"time"
+
+	"github.com/Builderhummel/thesis-app/app/Constants/roles"
 )
 
 var dbSession *DBController
@@ -47,6 +49,14 @@ func VerifyLoginUser(userid string) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+func GetUserRoleByLoginHandle(userid string) (roles.Role, error) {
+	role, err := dbSession.GtUsrRleByLgnHndle(userid)
+	if err != nil {
+		return "", err
+	}
+	return role, nil
 }
 
 func CheckUserActive(userid string) (bool, error) {
@@ -97,16 +107,16 @@ func GetAllExaminers() ([]PersonalData, error) {
 	return data, nil
 }
 
-func InsertNewUser(name, email, handle string, active, isSupervisor, isExaminer bool) error {
-	err := dbSession.InsrtNwUsr(name, email, handle, active, isSupervisor, isExaminer)
+func InsertNewUser(name, email, handle, role string, active, isSupervisor, isExaminer bool) error {
+	err := dbSession.InsrtNwUsr(name, email, handle, role, active, isSupervisor, isExaminer)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func UpdateFullUser(puid, name, email, handle string, active, isSupervisor, isExaminer bool) error {
-	err := dbSession.UptFullUsr(puid, name, email, handle, active, isSupervisor, isExaminer)
+func UpdateFullUser(puid, name, email, handle, role string, active, isSupervisor, isExaminer bool) error {
+	err := dbSession.UptFullUsr(puid, name, email, handle, role, active, isSupervisor, isExaminer)
 	if err != nil {
 		return err
 	}
@@ -173,7 +183,7 @@ func InsertNewThesisRequest(name, email, courseOfStudy, thesisType, thesisTitle,
 	return nil
 }
 
-func UpdateThesisInfo(td ThesisFullData) error {
+func UpdateThesisInfo(td *ThesisFullData) error {
 	err := dbSession.UpdtThesisInfo(td)
 	if err != nil {
 		return err

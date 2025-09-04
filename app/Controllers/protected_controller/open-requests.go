@@ -1,6 +1,7 @@
 package protected_controller
 
 import (
+	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	view_protected_open_requests "github.com/Builderhummel/thesis-app/app/Views/handler/protected/open_requests"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func RenderOpenRequests(c *gin.Context) {
 
 	c.HTML(200, "protected/open_requests/index.html", gin.H{
 		"TabOpReq": tabOpReq,
-		"Navbar":   renderNavbar(),
+		"Navbar":   renderNavbar(auth_controller.GetUserRoleFromContext(c)),
 	})
 }
 

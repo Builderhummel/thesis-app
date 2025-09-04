@@ -1,18 +1,13 @@
 package view_protected_common_navbar
 
+import "github.com/Builderhummel/thesis-app/app/Constants/roles"
+
 type NavVisibilityState struct {
 	Administration bool
 }
 
-func NewNavVisibilityState() NavVisibilityState {
-	return NavVisibilityState{}
-}
-
-func (s *NavVisibilityState) SetStates(Administration bool) {
-	s.Administration = Administration
-}
-
-func (s *NavVisibilityState) Init() error {
-	s.Administration = true
-	return nil
+func NewNavVisibilityState(userRole roles.Role) NavVisibilityState {
+	return NavVisibilityState{
+		Administration: userRole == roles.RoleAdministrator,
+	}
 }

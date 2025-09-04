@@ -1,0 +1,15 @@
+{{ define "admin/new_user/index.html" }}
+
+{{ template "admin/new_user/header.html" . }}
+
+<body>
+
+{{ template "protected/common/navbar.html" . }}
+
+{{ template "admin/new_user/content_body.html" . }}
+
+{{ template "lib_load/vendor/load_bootstrap_js.html"}}
+
+</body>
+
+{{ end }}
