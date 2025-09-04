@@ -8,3 +8,10 @@ const (
 	RoleManagement    Role = "management"
 	RoleAdministrator Role = "administrator"
 )
+
+var RoleHierarchy = map[Role]int{
+	RoleDefault:       0,
+	RoleResearcher:    1,
+	RoleManagement:    2,
+	RoleAdministrator: 3,
+}

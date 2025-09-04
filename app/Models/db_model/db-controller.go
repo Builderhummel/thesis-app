@@ -902,7 +902,7 @@ func (dbc *DBController) InsrtNwThsisRequest(name, email, courseOfStudy, thesisT
 	return nil
 }
 
-func (dbc *DBController) UpdtThesisInfo(td ThesisFullData) error {
+func (dbc *DBController) UpdtThesisInfo(td *ThesisFullData) error {
 	tx, err := dbc.db.Begin()
 	if err != nil {
 		return fmt.Errorf("begin transaction: %v", err)

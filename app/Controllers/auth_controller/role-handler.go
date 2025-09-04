@@ -28,3 +28,12 @@ func GetUserRoleFromContext(c *gin.Context) roles.Role {
 	}
 	return roles.RoleDefault
 }
+
+func MinUserGroup(userRole roles.Role, minRequired roles.Role) bool {
+	userRank, ok1 := roles.RoleHierarchy[userRole]
+	minRank, ok2 := roles.RoleHierarchy[minRequired]
+	if !ok1 || !ok2 {
+		return false // Deny unknown roles
+	}
+	return userRank >= minRank
+}

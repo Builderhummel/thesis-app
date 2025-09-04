@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Builderhummel/thesis-app/app/Constants/roles"
 	"github.com/Builderhummel/thesis-app/app/Controllers/auth_controller"
 	"github.com/Builderhummel/thesis-app/app/Models/db_model"
 	view_protected_edit_supervision_request "github.com/Builderhummel/thesis-app/app/Views/handler/protected/edit_supervision_request"
@@ -26,6 +27,11 @@ func RenderEditSupervisionRequestForm(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid tuid"})
 		return
 	}
+
+	userrole := auth_controller.GetUserRoleFromContext(c)
+
+	toggleableFields := view_protected_edit_supervision_request.NewToggleableFields()
+	toggleableFields.ToggleManagementFields(auth_controller.MinUserGroup(userrole, roles.RoleManagement))
 
 	tfd, err := db_model.GetDataFullSupervision(tuid)
 	if err != nil {
@@ -70,14 +76,16 @@ func RenderEditSupervisionRequestForm(c *gin.Context) {
 		tfd.Notes)
 
 	c.HTML(http.StatusOK, "protected/edit_supervision_request/index.html", gin.H{
-		"Navbar":    renderNavbar(auth_controller.GetUserRoleFromContext(c)),
-		"StudInf":   studInf,
-		"ThesisInf": thesisInf,
+		"Navbar":           renderNavbar(userrole),
+		"ToggleableFields": toggleableFields,
+		"StudInf":          studInf,
+		"ThesisInf":        thesisInf,
 	})
 }
 
 func HandleEditSupervisionRequest(c *gin.Context) {
-	tfd := db_model.ThesisFullData{}
+	userRole := auth_controller.GetUserRoleFromContext(c)
+
 	supervisors := []db_model.PersonalData{}
 	examiners := []db_model.PersonalData{}
 
@@ -91,6 +99,13 @@ func HandleEditSupervisionRequest(c *gin.Context) {
 		return
 	} else if tuid_num < 1 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid tuid"})
+		return
+	}
+
+	// Get original thesis data
+	tfd, err := db_model.GetDataFullSupervision(tuid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()}) //TODO: Proper error handling
 		return
 	}
 
@@ -136,36 +151,55 @@ func HandleEditSupervisionRequest(c *gin.Context) {
 		return
 	}
 
-	tfd.TUID = tuid
-	tfd.Name = c.PostForm("name")
-	tfd.Email = c.PostForm("email")
-	tfd.StudyProgram = c.PostForm("study-program")
-	tfd.GPA = gpa
-	tfd.Booked = c.PostForm("thesis-booked") == "true"
-	tfd.ThesisType = c.PostForm("thesis-type")
-	tfd.ThesisTitle = c.PostForm("thesis-title")
-	tfd.ThesisStatus = c.PostForm("thesis-status")
-	tfd.Semester = concatSemesterInfo(c.PostForm("thesis-semester"), c.PostForm("thesis-semester-year")) //to handle thesis-semester, thesis-semester-year
-	tfd.FinalGrade = finalGrade
-	tfd.RequestDate = requestDate
-	tfd.ResponseDate = responseDate
-	tfd.RegisteredDate = registeredDate
-	tfd.Deadline = deadline
-	tfd.SubmitDate = submitDate
-	tfd.Notes = c.PostForm("notes")
-
-	supervisors_puid := c.PostFormArray("supervisors[]")
-	examiners_puid := c.PostFormArray("examiners[]")
-
-	for _, puid := range supervisors_puid {
-		supervisors = append(supervisors, db_model.PersonalData{PDUid: puid})
-	}
-	for _, puid := range examiners_puid {
-		examiners = append(examiners, db_model.PersonalData{PDUid: puid})
+	// Update the data according to user role permissions
+	// Min role: Default
+	if auth_controller.MinUserGroup(userRole, roles.RoleDefault) {
+		// Default has to rights atm
 	}
 
-	tfd.Supervisors = supervisors
-	tfd.Examiners = examiners
+	// Min role: Researcher
+	if auth_controller.MinUserGroup(userRole, roles.RoleResearcher) {
+		tfd.TUID = tuid
+		tfd.Name = c.PostForm("name")
+		tfd.Email = c.PostForm("email")
+		tfd.StudyProgram = c.PostForm("study-program")
+		tfd.GPA = gpa
+		tfd.ThesisType = c.PostForm("thesis-type")
+		tfd.ThesisTitle = c.PostForm("thesis-title")
+		tfd.ThesisStatus = c.PostForm("thesis-status")
+		tfd.FinalGrade = finalGrade
+		tfd.RequestDate = requestDate
+		tfd.ResponseDate = responseDate
+		tfd.RegisteredDate = registeredDate
+		tfd.Deadline = deadline
+		tfd.SubmitDate = submitDate
+		tfd.Notes = c.PostForm("notes")
+
+		//Supervision Fields
+		supervisors_puid := c.PostFormArray("supervisors[]")
+		examiners_puid := c.PostFormArray("examiners[]")
+
+		for _, puid := range supervisors_puid {
+			supervisors = append(supervisors, db_model.PersonalData{PDUid: puid})
+		}
+		for _, puid := range examiners_puid {
+			examiners = append(examiners, db_model.PersonalData{PDUid: puid})
+		}
+
+		tfd.Supervisors = supervisors
+		tfd.Examiners = examiners
+	}
+
+	// Min role: Management
+	if auth_controller.MinUserGroup(userRole, roles.RoleManagement) {
+		tfd.Semester = concatSemesterInfo(c.PostForm("thesis-semester"), c.PostForm("thesis-semester-year")) //to handle thesis-semester, thesis-semester-year
+		tfd.Booked = c.PostForm("thesis-booked") == "true"
+	}
+
+	// Min role: Administrator
+	if auth_controller.MinUserGroup(userRole, roles.RoleAdministrator) {
+		//TODO: Only things an administrator can change
+	}
 
 	err = db_model.UpdateThesisInfo(tfd)
 	if err != nil {

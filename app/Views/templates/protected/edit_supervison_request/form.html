@@ -23,13 +23,6 @@
           <input type="number" min="1" max="5" step="0.01" class="form-control" id="gpa" name="gpa" placeholder="Enter the GPA (x.xx)" required value="{{.StudInf.GPA}}">
       </div>
 
-      <div class="col-12 mb-3">
-          <input class="form-check-input" type="checkbox" value="true" id="thesis-booked" name="thesis-booked" {{if .StudInf.Booked}}checked{{end}}>
-          <label class="form-check-label" for="thesis" data-bs-toggle="tooltip" data-bs-placement="right" title="Only touch if you know what you are doing!">
-            Booked
-          </label>
-      </div>
-
       <hr>
       <h3 class="mb-4">Thesis info</h3>
 
@@ -61,24 +54,7 @@
             <option {{if eq .ThesisInf.ThesisStatus "dropped"}}selected{{end}}>dropped</option>              
         </select>
     </div>
-    
-
-    <div class="row">
-        <div class="col-2 mb-3">
-            <label for="thesis-semester" class="form-label">Semester</label>
-            <select class="form-select" id="thesis-semester" name="thesis-semester" autocomplete="off">
-                <option selected value="">Select WiSe/SoSe</option>
-                <option {{if eq .ThesisInf.SemesterSelection "WiSe"}}selected{{end}}>WiSe</option>
-                <option {{if eq .ThesisInf.SemesterSelection "SoSe"}}selected{{end}}>SoSe</option>
-            </select>
-        </div>
-        <div class="col-3 mb-3">
-            <label for="thesis-semester-year" class="form-label">Year</label>
-            <input type="text" class="form-control" id="thesis-semester-year" name="thesis-semester-year" placeholder="e.g. <19/20, 20>" value="{{.ThesisInf.SemesterYear}}">
-        </div>
-    </div>
-    
-
+  
     <div class="col-12 mb-3">
         <label for="final-grade" class="form-label">Final Grade</label>
         <input type="number" min="1" max="5" step="0.01" class="form-control" id="final-grade" name="final-grade" placeholder="Enter final grade (x.xx)" value="{{.ThesisInf.FinalGrade}}">
@@ -136,6 +112,31 @@
         <label for="notes" class="form-label">Notes</label>
         <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter any additional notes">{{.ThesisInf.Notes}}</textarea>
     </div>
+
+    <hr>
+    <h3 class="mb-4">Management</h3>
+    <!-- Ensure that only users with the management role can edit these fields -> disabled will not submit them-->
+    <div class="row">
+        <div class="col-2 mb-3">
+                <label for="thesis-semester" class="form-label">Semester</label>
+                <select class="form-select" id="thesis-semester" name="thesis-semester" autocomplete="off" {{if not .ToggleableFields.Management}}disabled{{end}}>
+                    <option selected value="">Select WiSe/SoSe</option>
+                    <option {{if eq .ThesisInf.SemesterSelection "WiSe"}}selected{{end}}>WiSe</option>
+                    <option {{if eq .ThesisInf.SemesterSelection "SoSe"}}selected{{end}}>SoSe</option>
+                </select>
+            </div>
+            <div class="col-3 mb-3">
+                <label for="thesis-semester-year" class="form-label">Year</label>
+                <input type="text" class="form-control" id="thesis-semester-year" name="thesis-semester-year" placeholder="e.g. <19/20, 20>" value="{{.ThesisInf.SemesterYear}}" {{if not .ToggleableFields.Management}}disabled{{end}}>
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <input class="form-check-input" type="checkbox" value="true" id="thesis-booked" name="thesis-booked" {{if .StudInf.Booked}}checked{{end}} {{if not .ToggleableFields.Management}}disabled{{end}}>
+            <label class="form-check-label" for="thesis" data-bs-toggle="tooltip" data-bs-placement="right" title="Only touch if you know what you are doing!">
+                Booked
+            </label>
+        </div>
+
 
     <div class="d-flex justify-content-end">
         <button type="submit" class="btn btn-primary me-2">Save Changes</button>

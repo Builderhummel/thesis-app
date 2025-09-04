@@ -183,7 +183,7 @@ func InsertNewThesisRequest(name, email, courseOfStudy, thesisType, thesisTitle,
 	return nil
 }
 
-func UpdateThesisInfo(td ThesisFullData) error {
+func UpdateThesisInfo(td *ThesisFullData) error {
 	err := dbSession.UpdtThesisInfo(td)
 	if err != nil {
 		return err
