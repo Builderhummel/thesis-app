@@ -13,6 +13,8 @@ import (
 )
 
 func RenderViewSupervisionRequestForm(c *gin.Context) {
+	referer := c.Request.Referer()
+
 	tuid := html.EscapeString(c.Query("tuid"))
 	if tuid == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No tuid provided"})
@@ -41,6 +43,7 @@ func RenderViewSupervisionRequestForm(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "protected/view_supervision_request/index.html", gin.H{
 		"Navbar":    renderNavbar(auth_controller.GetUserRoleFromContext(c)),
+		"Referer":   referer,
 		"StudInf":   studInf,
 		"ThesisInf": thesisInf,
 	})
