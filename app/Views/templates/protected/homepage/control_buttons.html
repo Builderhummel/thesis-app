@@ -5,7 +5,23 @@
         <a href="/all" type="button" class="btn btn-primary">Show all</a>
     </div>
     <div class="p-2 g-col-6">
-        <a href="/export?format=csv" class="btn btn-secondary" role="button">Export CSV</a>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Export as...
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+            <li>
+                <a href="/export?format=xlsx" class="dropdown-item">
+                <button class="btn btn-success w-100" type="button">XLSX</button>
+                </a>
+            </li>
+            <li>
+                <a href="/export?format=csv" class="dropdown-item">
+                <button class="btn btn-secondary w-100" type="button">CSV</button>
+                </a>
+            </li>
+            </ul>
+        </div>
     </div>
 </div>
 {{ end }}
