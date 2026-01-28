@@ -120,6 +120,7 @@ func (dbc *DBController) InitDatabase() error {
 			FileSize BIGINT NOT NULL,
 			UploadDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			PDUID INT,
+			Category VARCHAR(255),
 			FOREIGN KEY (TUID) REFERENCES Thesis(TUID) ON DELETE CASCADE,
 			FOREIGN KEY (PDUID) REFERENCES PersonalData(PDUID)
 		)
@@ -1039,10 +1040,10 @@ func (dbc *DBController) updtJunction(tx *sql.Tx, thesisID string, people []Pers
 }
 
 // File management methods
-func (dbc *DBController) InsrtFileRecord(tuid, fileName, originalFileName string, fileSize int64, pduid string) (int64, error) {
+func (dbc *DBController) InsrtFileRecord(tuid, fileName, originalFileName string, fileSize int64, pduid, category string) (int64, error) {
 	result, err := dbc.db.Exec(
-		"INSERT INTO ThesisFiles (TUID, FileName, OriginalFileName, FileSize, PDUID) VALUES (?, ?, ?, ?, ?)",
-		tuid, fileName, originalFileName, fileSize, pduid,
+		"INSERT INTO ThesisFiles (TUID, FileName, OriginalFileName, FileSize, PDUID, Category) VALUES (?, ?, ?, ?, ?, ?)",
+		tuid, fileName, originalFileName, fileSize, pduid, category,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert file record: %v", err)
@@ -1058,7 +1059,7 @@ func (dbc *DBController) InsrtFileRecord(tuid, fileName, originalFileName string
 
 func (dbc *DBController) GtFilesByThesis(tuid string) ([]ThesisFile, error) {
 	query := `
-		SELECT FUID, TUID, FileName, OriginalFileName, FileSize, UploadDate, COALESCE(PDUID, '') as PDUID
+		SELECT FUID, TUID, FileName, OriginalFileName, FileSize, UploadDate, COALESCE(PDUID, '') as PDUID, COALESCE(Category, '') as Category
 		FROM ThesisFiles
 		WHERE TUID = ?
 		ORDER BY UploadDate DESC
@@ -1073,7 +1074,7 @@ func (dbc *DBController) GtFilesByThesis(tuid string) ([]ThesisFile, error) {
 	var files []ThesisFile
 	for rows.Next() {
 		var file ThesisFile
-		err := rows.Scan(&file.FUID, &file.TUID, &file.FileName, &file.OriginalFileName, &file.FileSize, &file.UploadDate, &file.PDUID)
+		err := rows.Scan(&file.FUID, &file.TUID, &file.FileName, &file.OriginalFileName, &file.FileSize, &file.UploadDate, &file.PDUID, &file.Category)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan file: %v", err)
 		}
@@ -1086,12 +1087,12 @@ func (dbc *DBController) GtFilesByThesis(tuid string) ([]ThesisFile, error) {
 func (dbc *DBController) GtFileByID(fuid string) (*ThesisFile, error) {
 	var file ThesisFile
 	query := `
-		SELECT FUID, TUID, FileName, OriginalFileName, FileSize, UploadDate, COALESCE(PDUID, '') as PDUID
+		SELECT FUID, TUID, FileName, OriginalFileName, FileSize, UploadDate, COALESCE(PDUID, '') as PDUID, COALESCE(Category, '') as Category
 		FROM ThesisFiles
 		WHERE FUID = ?
 	`
 
-	err := dbc.db.QueryRow(query, fuid).Scan(&file.FUID, &file.TUID, &file.FileName, &file.OriginalFileName, &file.FileSize, &file.UploadDate, &file.PDUID)
+	err := dbc.db.QueryRow(query, fuid).Scan(&file.FUID, &file.TUID, &file.FileName, &file.OriginalFileName, &file.FileSize, &file.UploadDate, &file.PDUID, &file.Category)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("file not found")

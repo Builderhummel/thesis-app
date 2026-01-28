@@ -68,6 +68,9 @@ func HandleFileUpload(c *gin.Context) {
 		return
 	}
 
+	// Get category from form (optional)
+	category := html.EscapeString(c.PostForm("category"))
+
 	// Generate unique filename using hash + timestamp
 	ext := filepath.Ext(header.Filename)
 	hash := sha256.New()
@@ -100,7 +103,7 @@ func HandleFileUpload(c *gin.Context) {
 	}
 
 	// Insert file record into database
-	_, err = db_model.InsertFileRecord(tuid, uniqueName, header.Filename, header.Size, pduid)
+	_, err = db_model.InsertFileRecord(tuid, uniqueName, header.Filename, header.Size, pduid, category)
 	if err != nil {
 		os.Remove(filePath) // Clean up on error
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file information"})
@@ -176,6 +179,7 @@ func HandleFileList(c *gin.Context) {
 		FileSize         int64  `json:"size"`
 		UploadDate       string `json:"upload_date"`
 		PDUID            string `json:"pduid"`
+		Category         string `json:"category"`
 	}
 
 	var fileList []FileInfo
@@ -186,6 +190,7 @@ func HandleFileList(c *gin.Context) {
 			FileSize:         f.FileSize,
 			UploadDate:       f.UploadDate.Format("2006-01-02 15:04:05"),
 			PDUID:            f.PDUID,
+			Category:         f.Category,
 		})
 	}
 

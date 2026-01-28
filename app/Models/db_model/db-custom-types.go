@@ -47,4 +47,5 @@ type ThesisFile struct {
 	FileSize         int64
 	UploadDate       time.Time
 	PDUID            string
+	Category         string
 }

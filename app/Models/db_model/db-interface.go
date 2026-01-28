@@ -208,8 +208,8 @@ func CheckIfThesisIsBooked(thesisID string) (bool, error) {
 }
 
 // File operations
-func InsertFileRecord(tuid, fileName, originalFileName string, fileSize int64, pduid string) (int64, error) {
-	return dbSession.InsrtFileRecord(tuid, fileName, originalFileName, fileSize, pduid)
+func InsertFileRecord(tuid, fileName, originalFileName string, fileSize int64, pduid, category string) (int64, error) {
+	return dbSession.InsrtFileRecord(tuid, fileName, originalFileName, fileSize, pduid, category)
 }
 
 func GetFilesByThesis(tuid string) ([]ThesisFile, error) {
