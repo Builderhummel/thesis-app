@@ -111,6 +111,23 @@ func (dbc *DBController) InitDatabase() error {
 		return err
 	}
 
+	_, err = dbc.db.Exec(`
+		CREATE TABLE ThesisFiles (
+			FUID INT AUTO_INCREMENT PRIMARY KEY,
+			TUID INT NOT NULL,
+			FileName VARCHAR(255) NOT NULL,
+			OriginalFileName VARCHAR(255) NOT NULL,
+			FileSize BIGINT NOT NULL,
+			UploadDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PDUID INT,
+			FOREIGN KEY (TUID) REFERENCES Thesis(TUID) ON DELETE CASCADE,
+			FOREIGN KEY (PDUID) REFERENCES PersonalData(PDUID)
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -1016,6 +1033,88 @@ func (dbc *DBController) updtJunction(tx *sql.Tx, thesisID string, people []Pers
 		if err != nil {
 			return fmt.Errorf("junction insert error: %v", err)
 		}
+	}
+
+	return nil
+}
+
+// File management methods
+func (dbc *DBController) InsrtFileRecord(tuid, fileName, originalFileName string, fileSize int64, pduid string) (int64, error) {
+	result, err := dbc.db.Exec(
+		"INSERT INTO ThesisFiles (TUID, FileName, OriginalFileName, FileSize, PDUID) VALUES (?, ?, ?, ?, ?)",
+		tuid, fileName, originalFileName, fileSize, pduid,
+	)
+	if err != nil {
+		return 0, fmt.Errorf("failed to insert file record: %v", err)
+	}
+
+	fileID, err := result.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get file ID: %v", err)
+	}
+
+	return fileID, nil
+}
+
+func (dbc *DBController) GtFilesByThesis(tuid string) ([]ThesisFile, error) {
+	query := `
+		SELECT FUID, TUID, FileName, OriginalFileName, FileSize, UploadDate, COALESCE(PDUID, '') as PDUID
+		FROM ThesisFiles
+		WHERE TUID = ?
+		ORDER BY UploadDate DESC
+	`
+
+	rows, err := dbc.db.Query(query, tuid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query files: %v", err)
+	}
+	defer rows.Close()
+
+	var files []ThesisFile
+	for rows.Next() {
+		var file ThesisFile
+		err := rows.Scan(&file.FUID, &file.TUID, &file.FileName, &file.OriginalFileName, &file.FileSize, &file.UploadDate, &file.PDUID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan file: %v", err)
+		}
+		files = append(files, file)
+	}
+
+	return files, nil
+}
+
+func (dbc *DBController) GtFileByID(fuid string) (*ThesisFile, error) {
+	var file ThesisFile
+	query := `
+		SELECT FUID, TUID, FileName, OriginalFileName, FileSize, UploadDate, COALESCE(PDUID, '') as PDUID
+		FROM ThesisFiles
+		WHERE FUID = ?
+	`
+
+	err := dbc.db.QueryRow(query, fuid).Scan(&file.FUID, &file.TUID, &file.FileName, &file.OriginalFileName, &file.FileSize, &file.UploadDate, &file.PDUID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("file not found")
+		}
+		return nil, fmt.Errorf("failed to get file: %v", err)
+	}
+
+	return &file, nil
+}
+
+func (dbc *DBController) DelFileRecord(fuid string) error {
+	result, err := dbc.db.Exec("DELETE FROM ThesisFiles WHERE FUID = ?", fuid)
+	if err != nil {
+		return fmt.Errorf("failed to delete file record: %v", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to get rows affected: %v", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("file not found")
 	}
 
 	return nil

@@ -38,3 +38,13 @@ type PersonalData struct {
 	IsSupervisor bool
 	IsExaminer   bool
 }
+
+type ThesisFile struct {
+	FUID             int64
+	TUID             string
+	FileName         string
+	OriginalFileName string
+	FileSize         int64
+	UploadDate       time.Time
+	PDUID            string
+}

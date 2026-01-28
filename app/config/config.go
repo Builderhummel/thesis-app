@@ -6,17 +6,21 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 )
 
 type Configuration struct {
-	DBIP       string `json:"db_ip"`
-	DBPort     string `json:"db_port"`
-	DBUsername string `json:"db_username"`
-	DBPassword string `json:"db_password"`
-	DBName     string `json:"db_name"`
-	LDAPUrl    string `json:"ldap_url"`
-	LDAPDn     string `json:"ldap_dn"`
-	JWTSecret  string `json:"jwt_secret"`
+	DBIP               string `json:"db_ip"`
+	DBPort             string `json:"db_port"`
+	DBUsername         string `json:"db_username"`
+	DBPassword         string `json:"db_password"`
+	DBName             string `json:"db_name"`
+	LDAPUrl            string `json:"ldap_url"`
+	LDAPDn             string `json:"ldap_dn"`
+	JWTSecret          string `json:"jwt_secret"`
+	FileUploadDir      string `json:"file_upload_dir"`
+	FileMaxSize        int64  `json:"file_max_size"`
+	FileMaxFilenameLen int    `json:"file_max_filename_len"`
 }
 
 func LoadConfig() (*Configuration, error) {
@@ -53,6 +57,8 @@ func loadFromEnvvar() *Configuration {
 	cfg.LDAPUrl = os.Getenv("LDAP_URL")
 	cfg.LDAPDn = os.Getenv("LDAP_DN")
 	cfg.JWTSecret = os.Getenv("JWT_SECRET")
-
+	cfg.FileUploadDir = os.Getenv("FILE_UPLOAD_DIR")
+	cfg.FileMaxSize, _ = strconv.ParseInt(os.Getenv("FILE_MAX_SIZE"), 10, 64)
+	cfg.FileMaxFilenameLen, _ = strconv.Atoi(os.Getenv("FILE_MAX_FILENAME_LEN"))
 	return &cfg
 }

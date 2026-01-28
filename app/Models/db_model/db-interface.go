@@ -147,6 +147,10 @@ func GetDataTableAllSupervisions() ([]map[string]string, error) {
 	return data, nil
 }
 
+func GetUserPuidFromUserId(user_id string) (string, error) {
+	return dbSession.GtUsrPuidFromUserId(user_id)
+}
+
 func GetDataTableMySupervisions(user_id string) ([]map[string]string, error) {
 	puid, err := dbSession.GtUsrPuidFromUserId(user_id)
 	if err != nil {
@@ -201,4 +205,21 @@ func DeleteThesisRequest(tuid string) error {
 
 func CheckIfThesisIsBooked(thesisID string) (bool, error) {
 	return dbSession.ChkIfThesisIsBooked(thesisID)
+}
+
+// File operations
+func InsertFileRecord(tuid, fileName, originalFileName string, fileSize int64, pduid string) (int64, error) {
+	return dbSession.InsrtFileRecord(tuid, fileName, originalFileName, fileSize, pduid)
+}
+
+func GetFilesByThesis(tuid string) ([]ThesisFile, error) {
+	return dbSession.GtFilesByThesis(tuid)
+}
+
+func GetFileByID(fuid string) (*ThesisFile, error) {
+	return dbSession.GtFileByID(fuid)
+}
+
+func DeleteFileRecord(fuid string) error {
+	return dbSession.DelFileRecord(fuid)
 }

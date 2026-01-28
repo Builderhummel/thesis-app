@@ -6,5 +6,8 @@
     "db_name": "thesis-app",
     "ldap_url": "ldaps://ldap.example.com:636",
     "ldap_dn": "ou=people,dc=tu-example,dc=de",
-    "jwt_secret": "e7bb...."
+    "jwt_secret": "e7bb....",
+    "file_upload_dir": "./uploads",
+    "file_max_size": 52428800,
+    "file_max_filename_len": 255
 }

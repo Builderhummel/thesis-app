@@ -37,6 +37,12 @@ func Router(r *gin.Engine) {
 
 	protected.GET("/export", HandleExport)
 
+	// File management routes
+	protected.POST("/files/upload", HandleFileUpload)
+	protected.GET("/files/download", HandleFileDownload)
+	protected.GET("/files/list", HandleFileList)
+	protected.DELETE("/files/delete", HandleFileDelete)
+
 	// Admin (User has role "administrator")
 	admin_route := protected.Group("/admin")
 	admin_route.Use(middleware.RequireRole(roles.RoleAdministrator))

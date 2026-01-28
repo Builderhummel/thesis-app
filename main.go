@@ -30,6 +30,9 @@ func init_config() {
 	//Config Injections here
 	db_model.Config = cfg
 	auth_controller.Config = cfg
+	protected_controller.Config = cfg
+
+	fmt.Println("init_config(): Configuration loaded successfully.")
 }
 
 func main() {
