@@ -35,6 +35,13 @@ func RenderViewSupervisionRequestForm(c *gin.Context) {
 		return
 	}
 
+	// Get files for this thesis
+	files, err := db_model.GetFilesByThesis(tuid)
+	if err != nil {
+		// Log error but continue - files are optional
+		files = []db_model.ThesisFile{}
+	}
+
 	studInf := view_protected_view_supervision_request.NewFieldStudentInfo()
 	studInf.SetInfo(tfd.Name, tfd.Email, tfd.StudyProgram, fmt.Sprintf("%.2f", tfd.GPA))
 
@@ -46,5 +53,7 @@ func RenderViewSupervisionRequestForm(c *gin.Context) {
 		"Referer":   referer,
 		"StudInf":   studInf,
 		"ThesisInf": thesisInf,
+		"Files":     files,
+		"TUID":      tuid,
 	})
 }

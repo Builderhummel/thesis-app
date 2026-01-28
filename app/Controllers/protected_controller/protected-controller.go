@@ -30,6 +30,7 @@ func Router(r *gin.Engine) {
 	protected.POST("/delete", HandleDeleteThesisRequest)
 
 	protected.GET("/view", RenderViewSupervisionRequestForm)
+	protected.StaticFile("/js/custom/view_supervision_request/file-management.js", "./app/Views/templates/protected/view_supervision_request/file-management.js")
 
 	protected.GET("/edit", RenderEditSupervisionRequestForm)
 	protected.POST("/edit", HandleEditSupervisionRequest)

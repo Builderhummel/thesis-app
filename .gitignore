@@ -35,3 +35,6 @@ launcher.sh
 
 # Temporary
 docker/
+
+# Uploads
+uploads/

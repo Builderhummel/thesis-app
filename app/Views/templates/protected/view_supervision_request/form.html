@@ -108,6 +108,75 @@
             <div>{{ .ThesisInf.Notes }}</div>
         </div>
     </div>
+
+    <hr>
+
+    <!-- File Management Section -->
+    <h3 class="mb-4">Attached Files</h3>
+    <div class="row mb-4">
+        <div class="col-12">
+            <!-- File List -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <strong>Files ({{ len .Files }})</strong>
+                </div>
+                <ul class="list-group list-group-flush" id="fileList">
+                    {{ if eq (len .Files) 0 }}
+                    <li class="list-group-item text-center text-muted py-4">
+                        <div>No files attached yet</div>
+                        <small>Upload files using the button above</small>
+                    </li>
+                    {{ else }}
+                    {{ range .Files }}
+                    <li class="list-group-item file-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">{{ .OriginalFileName }}</div>
+                                <small class="text-muted">
+                                    {{ .FileSize }} bytes • 
+                                    Uploaded {{ .UploadDate.Format "2006-01-02 15:04" }} • 
+                                    Category: {{ if eq .Category "final-thesis" }}Final Thesis{{ else if eq .Category "cv" }}CV{{ else if eq .Category "transcript-of-records" }}Transcript of Records{{ else if eq .Category "" }}Other{{ else }}{{ .Category }}{{ end }}
+                                </small>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <a href="/files/download?fuid={{ .FUID }}" class="btn btn-sm btn-outline-success btn-file-action" download title="Download">Download</a>
+                                <button class="btn btn-sm btn-outline-danger btn-file-action btn-delete-file" data-fuid="{{ .FUID }}" title="Delete">Delete</button>
+                            </div>
+                        </div>
+                    </li>
+                    {{ end }}
+                    {{ end }}
+                </ul>
+            </div>
+        </div>
+                <!-- Upload Form -->
+    <div class="col-12 mt-4">
+        <h4 class="mb-4">Upload Files</h4>
+        <form id="uploadForm" action="/files/upload" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="tuid" value="{{ .TUID }}">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="categorySelect" class="form-label">Category</label>
+                    <select class="form-select" id="categorySelect" name="category" required>
+                        <option value="other">Select category...</option>
+                        <option value="final-thesis">Final Thesis</option>
+                        <option value="cv">CV</option>
+                        <option value="transcript-of-records">Transcript of Records</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label for="fileInput" class="form-label">File</label>
+                    <div>
+                        <label for="fileInput" class="btn btn-success">Choose File</label>
+                        <input type="file" class="d-none" id="fileInput" name="file" required>
+                        <small class="text-muted ms-2">Maximum file size: 50MB</small>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
 <!--
     <div class="d-flex justify-content-end">
         <a href="{{ .Referer }}" class="btn btn-secondary" role="button">Back to List</a>
