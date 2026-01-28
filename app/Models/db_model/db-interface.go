@@ -220,6 +220,10 @@ func GetFileByID(fuid string) (*ThesisFile, error) {
 	return dbSession.GtFileByID(fuid)
 }
 
+func GetLatestFileByCategory(tuid, category string) (*ThesisFile, error) {
+	return dbSession.GtLatestFileByCategory(tuid, category)
+}
+
 func DeleteFileRecord(fuid string) error {
 	return dbSession.DelFileRecord(fuid)
 }

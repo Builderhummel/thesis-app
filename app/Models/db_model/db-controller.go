@@ -1103,6 +1103,27 @@ func (dbc *DBController) GtFileByID(fuid string) (*ThesisFile, error) {
 	return &file, nil
 }
 
+func (dbc *DBController) GtLatestFileByCategory(tuid string, category string) (*ThesisFile, error) {
+	var file ThesisFile
+	query := `
+		SELECT FUID, TUID, FileName, OriginalFileName, FileSize, UploadDate, COALESCE(PDUID, '') as PDUID, COALESCE(Category, '') as Category
+		FROM ThesisFiles
+		WHERE TUID = ? AND Category = ?
+		ORDER BY UploadDate DESC
+		LIMIT 1
+	`
+
+	err := dbc.db.QueryRow(query, tuid, category).Scan(&file.FUID, &file.TUID, &file.FileName, &file.OriginalFileName, &file.FileSize, &file.UploadDate, &file.PDUID, &file.Category)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("no file found for category")
+		}
+		return nil, fmt.Errorf("failed to get file: %v", err)
+	}
+
+	return &file, nil
+}
+
 func (dbc *DBController) DelFileRecord(fuid string) error {
 	result, err := dbc.db.Exec("DELETE FROM ThesisFiles WHERE FUID = ?", fuid)
 	if err != nil {

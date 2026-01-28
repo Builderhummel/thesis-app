@@ -13,6 +13,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 deleteFile(fuid);
             }
         }
+        
+        // Handle category download buttons
+        if (e.target.classList.contains('btn-download-category')) {
+            const category = e.target.getAttribute('data-category');
+            if (category) {
+                downloadLatestByCategory(category);
+            }
+        }
     });
 });
 
@@ -63,4 +71,30 @@ function deleteFile(fuid) {
     .catch(error => {
         alert('Error deleting file: ' + error);
     });
+}
+
+function downloadLatestByCategory(category) {
+    const btnGroup = document.querySelector('.btn-group[data-tuid]');
+    if (!btnGroup) {
+        alert('Unable to determine thesis ID');
+        return;
+    }
+
+    const tuid = btnGroup.getAttribute('data-tuid');
+    if (!tuid) {
+        alert('Thesis ID not found');
+        return;
+    }
+
+    // Download using category parameter
+    window.location.href = `/files/download?tuid=${tuid}&category=${category}`;
+}
+
+function getCategoryName(category) {
+    const names = {
+        'transcript-of-records': 'Transcript of Records',
+        'cv': 'CV',
+        'final-thesis': 'Final Thesis'
+    };
+    return names[category] || category;
 }

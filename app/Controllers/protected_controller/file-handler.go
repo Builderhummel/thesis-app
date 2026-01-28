@@ -119,15 +119,41 @@ func HandleFileUpload(c *gin.Context) {
 // HandleFileDownload serves a file for download
 func HandleFileDownload(c *gin.Context) {
 	fuid := html.EscapeString(c.Query("fuid"))
-	if fuid == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "No file ID provided"})
-		return
-	}
+	category := html.EscapeString(c.Query("category"))
+	tuid := html.EscapeString(c.Query("tuid"))
 
-	// Get file info from database
-	fileInfo, err := db_model.GetFileByID(fuid)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
+	var fileInfo *db_model.ThesisFile
+	var err error
+
+	// Check if downloading by category
+	if category != "" {
+		if tuid == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Thesis ID required when downloading by category"})
+			return
+		}
+
+		// Validate TUID
+		tuidNum, err := strconv.Atoi(tuid)
+		if err != nil || tuidNum < 1 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid thesis ID"})
+			return
+		}
+
+		// Get latest file by category
+		fileInfo, err = db_model.GetLatestFileByCategory(tuid, category)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "No file found for this category"})
+			return
+		}
+	} else if fuid != "" {
+		// Get file by ID
+		fileInfo, err = db_model.GetFileByID(fuid)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
+			return
+		}
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Either file ID or category must be provided"})
 		return
 	}
 
