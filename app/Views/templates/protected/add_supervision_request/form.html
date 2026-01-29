@@ -13,7 +13,18 @@
     </div>
     <div class="mb-3">
       <label for="course-of-study">Course of Study</label>
-      <input type="text" class="form-control" name="course-of-study" placeholder="Enter the Course of Study (e.g. CS)" required>
+      <select class="form-control" name="course-of-study" required>
+        <option disabled selected value="" style="display:none">--- Select an option ---</option>
+        <option>CS</option>
+        <option>DS</option>
+        <option>ICS</option>
+        <option>IIW</option>
+        <option>EE</option>
+        <option>MM</option>
+        <option>MT</option>
+        <option>TM</option>
+        <option>other</option>
+      </select>
     </div>
     <div class="mb-3">
       <label for="thesis-type">Thesis Type</label>
