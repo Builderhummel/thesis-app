@@ -18,6 +18,7 @@ type ThesisFullData struct {
 	ThesisStatus   string
 	Semester       string
 	FinalGrade     float64
+	GitlabRepo     string
 	RequestDate    time.Time
 	ResponseDate   time.Time
 	RegisteredDate time.Time

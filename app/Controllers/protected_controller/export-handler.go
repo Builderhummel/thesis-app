@@ -60,6 +60,7 @@ func thesisToCSVRow(t *db_model.ThesisFullData) []string {
 		t.ThesisStatus,
 		t.Semester,
 		strconv.FormatFloat(t.FinalGrade, 'f', 2, 64),
+		t.GitlabRepo,
 		t.RequestDate.Format(layout),
 		t.ResponseDate.Format(layout),
 		t.RegisteredDate.Format(layout),
@@ -76,7 +77,7 @@ func csvHeader() []string {
 	return []string{
 		"TUID", "Name", "Email", "StudyProgram", "Booked", "GPA",
 		"ThesisType", "ThesisTitle", "ThesisStatus", "Semester", "FinalGrade",
-		"RequestDate", "ResponseDate", "RegisteredDate", "Deadline", "SubmitDate",
+		"GitlabRepo", "RequestDate", "ResponseDate", "RegisteredDate", "Deadline", "SubmitDate",
 		"Supervisors", "Examiners", "Notes",
 	}
 }
@@ -99,7 +100,7 @@ func xlsxHeader() []string {
 	return []string{
 		"TUID", "Name", "Email", "StudyProgram", "Booked", "GPA",
 		"ThesisType", "ThesisTitle", "ThesisStatus", "Semester", "FinalGrade",
-		"RequestDate", "ResponseDate", "RegisteredDate", "Deadline", "SubmitDate",
+		"GitlabRepo", "RequestDate", "ResponseDate", "RegisteredDate", "Deadline", "SubmitDate",
 		"Supervisors", "Examiners", "Notes",
 	}
 }
@@ -119,6 +120,7 @@ func thesisToXLSXRow(t *db_model.ThesisFullData) []string {
 		t.ThesisStatus,
 		t.Semester,
 		strconv.FormatFloat(t.FinalGrade, 'f', 2, 64),
+		t.GitlabRepo,
 		t.RequestDate.Format(layout),
 		t.ResponseDate.Format(layout),
 		t.RegisteredDate.Format(layout),

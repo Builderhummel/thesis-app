@@ -67,6 +67,7 @@ func RenderEditSupervisionRequestForm(c *gin.Context) {
 		tfd.ThesisTitle,
 		tfd.ThesisStatus, tfd.Semester,
 		tfd.FinalGrade,
+		tfd.GitlabRepo,
 		tfd.RequestDate,
 		tfd.ResponseDate,
 		tfd.RegisteredDate,
@@ -168,6 +169,7 @@ func HandleEditSupervisionRequest(c *gin.Context) {
 		tfd.ThesisTitle = c.PostForm("thesis-title")
 		tfd.ThesisStatus = c.PostForm("thesis-status")
 		tfd.FinalGrade = finalGrade
+		tfd.GitlabRepo = c.PostForm("gitlab-repo")
 		tfd.RequestDate = requestDate
 		tfd.ResponseDate = responseDate
 		tfd.RegisteredDate = registeredDate

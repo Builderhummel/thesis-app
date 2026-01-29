@@ -5,6 +5,7 @@
         <h1>View Supervision Request</h1>
         <div class="btn-group" role="group" data-tuid="{{ .TUID }}">
             <a href="/edit?tuid={{ .ThesisInf.Tuid }}" class="btn btn-primary border-start">Edit</a>
+            <!-- GITLAB Link-->
             <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=transcript-of-records&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" title="Download latest Transcript of Records">ToR</button>
             <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=cv&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" title="Download latest CV">CV</button>
             <a href="/delete?tuid={{ .ThesisInf.Tuid }}" class="btn border border-danger bg-white text-danger" role="button">&#128465;</a>
@@ -56,6 +57,17 @@
         <div class="col-12 mb-3">
             <label class="form-label fw-bold">Final Grade</label>
             <div>{{ .ThesisInf.FinalGrade }}</div>
+        </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label fw-bold">GitLab Repository</label>
+            <div>
+                {{ if .ThesisInf.GitlabRepo }}
+                    <a href="{{ .ThesisInf.GitlabRepo }}" target="_blank" rel="noopener noreferrer">{{ .ThesisInf.GitlabRepo }}</a>
+                {{ else }}
+                    No repository link provided
+                {{ end }}
+            </div>
         </div>
 
         <hr>

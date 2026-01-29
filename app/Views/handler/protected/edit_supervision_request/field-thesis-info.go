@@ -14,6 +14,7 @@ type FieldThesisInfo struct {
 	SemesterSelection string //1: WiSe, 2: SoSe
 	SemesterYear      string
 	FinalGrade        string
+	GitlabRepo        string
 	RequestDate       string
 	ResponseDate      string
 	RegisteredDate    string
@@ -38,7 +39,7 @@ func NewPersonalData() PersonalData {
 	return PersonalData{}
 }
 
-func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus, Semester string, FinalGrade float64, RequestDate, ResponseDate, RegisteredDate, Deadline, SubmitDate time.Time, Supervisors []PersonalData, Examiners []PersonalData, Notes string) {
+func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus, Semester string, FinalGrade float64, GitlabRepo string, RequestDate, ResponseDate, RegisteredDate, Deadline, SubmitDate time.Time, Supervisors []PersonalData, Examiners []PersonalData, Notes string) {
 	f.Tuid = Tuid
 	f.ThesisType = ThesisType
 	f.ThesisTitle = ThesisTitle
@@ -46,6 +47,7 @@ func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus, S
 	f.SemesterSelection = getSemesterSeason(Semester)
 	f.SemesterYear = getSemesterYear(Semester)
 	f.FinalGrade = overwriteFinalGrade(FinalGrade)
+	f.GitlabRepo = GitlabRepo
 	f.RequestDate = overwriteZeroDate(RequestDate, "")
 	f.ResponseDate = overwriteZeroDate(ResponseDate, "")
 	f.RegisteredDate = overwriteZeroDate(RegisteredDate, "")

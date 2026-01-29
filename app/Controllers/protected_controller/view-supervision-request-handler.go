@@ -46,7 +46,7 @@ func RenderViewSupervisionRequestForm(c *gin.Context) {
 	studInf.SetInfo(tfd.Name, tfd.Email, tfd.StudyProgram, fmt.Sprintf("%.2f", tfd.GPA))
 
 	thesisInf := view_protected_view_supervision_request.NewFieldThesisInfo()
-	thesisInf.SetInfo(tuid, tfd.ThesisType, tfd.ThesisTitle, tfd.ThesisStatus, tfd.FinalGrade, tfd.RequestDate, tfd.ResponseDate, tfd.RegisteredDate, tfd.Deadline, tfd.SubmitDate, getSupervisorsSliceFromPersonalData(tfd.Supervisors), getSupervisorsSliceFromPersonalData(tfd.Examiners), tfd.Notes)
+	thesisInf.SetInfo(tuid, tfd.ThesisType, tfd.ThesisTitle, tfd.ThesisStatus, tfd.FinalGrade, tfd.GitlabRepo, tfd.RequestDate, tfd.ResponseDate, tfd.RegisteredDate, tfd.Deadline, tfd.SubmitDate, getSupervisorsSliceFromPersonalData(tfd.Supervisors), getSupervisorsSliceFromPersonalData(tfd.Examiners), tfd.Notes)
 
 	c.HTML(http.StatusOK, "protected/view_supervision_request/index.html", gin.H{
 		"Navbar":    renderNavbar(auth_controller.GetUserRoleFromContext(c)),

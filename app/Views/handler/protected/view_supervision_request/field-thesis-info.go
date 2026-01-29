@@ -11,6 +11,7 @@ type FieldThesisInfo struct {
 	ThesisTitle    string
 	ThesisStatus   string
 	FinalGrade     string
+	GitlabRepo     string
 	RequestDate    string
 	ResponseDate   string
 	RegisteredDate string
@@ -25,12 +26,13 @@ func NewFieldThesisInfo() FieldThesisInfo {
 	return FieldThesisInfo{}
 }
 
-func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus string, FinalGrade float64, RequestDate, ResponseDate, RegisteredDate, Deadline, SubmitDate time.Time, Supervisors []string, Examiners []string, Notes string) {
+func (f *FieldThesisInfo) SetInfo(Tuid, ThesisType, ThesisTitle, ThesisStatus string, FinalGrade float64, GitlabRepo string, RequestDate, ResponseDate, RegisteredDate, Deadline, SubmitDate time.Time, Supervisors []string, Examiners []string, Notes string) {
 	f.Tuid = Tuid
 	f.ThesisType = ThesisType
 	f.ThesisTitle = ThesisTitle
 	f.ThesisStatus = ThesisStatus
 	f.FinalGrade = overwriteFinalGrade(FinalGrade)
+	f.GitlabRepo = GitlabRepo
 	f.RequestDate = overwriteZeroDate(RequestDate, "n/a")
 	f.ResponseDate = overwriteZeroDate(ResponseDate, "Not contacted yet")
 	f.RegisteredDate = overwriteZeroDate(RegisteredDate, "Not registered yet")

@@ -53,6 +53,7 @@ func (dbc *DBController) InitDatabase() error {
 			SubmitDate DATE,
 			Deadline DATE,
 			FinalGrade FLOAT,
+			GitlabRepo VARCHAR(512),
 			Notes TEXT
 		)
 	`)
@@ -751,6 +752,7 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
         ThesisStatus,
 		COALESCE(Semester, '') as Semester,
 		COALESCE(FinalGrade, -1) as FinalGrade, 
+		COALESCE(GitlabRepo, '') as GitlabRepo, 
 		CAST(COALESCE(RequestDate, '0001-01-01') AS DATE) as RequestDate, 
 		CAST(COALESCE(ResponseDate, '0001-01-01') AS DATE) as ResponseDate, 
 		CAST(COALESCE(RegisteredDate, '0001-01-01') AS DATE) as RegisteredDate, 
@@ -764,7 +766,7 @@ func (dbc *DBController) GtDataFullSupervision(thesisID string) (*ThesisFullData
 	err := dbc.db.QueryRow(mainQuery, thesisID).Scan(
 		&result.TUID, &result.Name, &result.Email, &result.StudyProgram, &result.Booked,
 		&result.GPA, &result.ThesisType, &result.ThesisTitle,
-		&result.ThesisStatus, &result.Semester, &result.FinalGrade, &result.RequestDate,
+		&result.ThesisStatus, &result.Semester, &result.FinalGrade, &result.GitlabRepo, &result.RequestDate,
 		&result.ResponseDate, &result.RegisteredDate, &result.Deadline, &result.SubmitDate,
 		&result.Notes,
 	)
@@ -830,6 +832,7 @@ func (dbc *DBController) GtAllDataFullSupervision() ([]*ThesisFullData, error) {
 			ThesisStatus,
 			COALESCE(Semester, '') as Semester,
 			COALESCE(FinalGrade, -1) as FinalGrade, 
+			COALESCE(GitlabRepo, '') as GitlabRepo, 
 			CAST(COALESCE(RequestDate, '0001-01-01') AS DATE) as RequestDate, 
 			CAST(COALESCE(ResponseDate, '0001-01-01') AS DATE) as ResponseDate, 
 			CAST(COALESCE(RegisteredDate, '0001-01-01') AS DATE) as RegisteredDate, 
@@ -853,7 +856,7 @@ func (dbc *DBController) GtAllDataFullSupervision() ([]*ThesisFullData, error) {
 		err := rows.Scan(
 			&result.TUID, &result.Name, &result.Email, &result.StudyProgram, &result.Booked,
 			&result.GPA, &result.ThesisType, &result.ThesisTitle,
-			&result.ThesisStatus, &result.Semester, &result.FinalGrade, &result.RequestDate,
+			&result.ThesisStatus, &result.Semester, &result.FinalGrade, &result.GitlabRepo, &result.RequestDate,
 			&result.ResponseDate, &result.RegisteredDate, &result.Deadline, &result.SubmitDate,
 			&result.Notes,
 		)
@@ -942,7 +945,7 @@ func (dbc *DBController) UpdtThesisInfo(td *ThesisFullData) error {
         SET Name=?, Email=?, StudyProgram=?, Booked=?, 
             ThesisType=?, ThesisStatus=?, Semester=?, 
             ThesisTitle=?, GPA=?, RequestDate=?, ResponseDate=?, RegisteredDate=?,
-            SubmitDate=?, Deadline=?, FinalGrade=?, Notes=?
+            SubmitDate=?, Deadline=?, FinalGrade=?, GitlabRepo=?, Notes=?
         WHERE TUID = ?`,
 		td.Name, td.Email, td.StudyProgram, td.Booked,
 		td.ThesisType, td.ThesisStatus, td.Semester,
@@ -954,6 +957,7 @@ func (dbc *DBController) UpdtThesisInfo(td *ThesisFullData) error {
 		convertGoDateToSqlNullDate(td.SubmitDate),
 		convertGoDateToSqlNullDate(td.Deadline),
 		convertGradeToNullFloat(td.FinalGrade),
+		td.GitlabRepo,
 		td.Notes,
 		td.TUID)
 	if err != nil {
