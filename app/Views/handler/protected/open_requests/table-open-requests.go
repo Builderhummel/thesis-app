@@ -14,20 +14,19 @@ type TableRowOpenRequest struct {
 	GPA             string // e.g. 4.0
 	RequestDate     string // Unix Time
 	Status          string // requested only xDD
-	LinkEmail       string // link to mailto:...
-	LinkModify      string
-	LinkDelete      string
+	Email           string // email address
+	Tuid            string // thesis unique id
 }
 
 func NewTableOpenRequests() TableOpenRequest {
 	return TableOpenRequest{}
 }
 
-func (t *TableOpenRequest) AddRow(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, LinkEmail, LinkModify, LinkDelete string) {
-	*t = append(*t, NewTableRowOpenRequest(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, LinkEmail, LinkModify, LinkDelete))
+func (t *TableOpenRequest) AddRow(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, Email, Tuid string) {
+	*t = append(*t, NewTableRowOpenRequest(ThesisType, Name, ThesisTitle, RequestDate, Semester, Status, Email, Tuid))
 }
 
-func NewTableRowOpenRequest(ThesisType, Name, CourseOfStudy, GPA, RequestDate, Status, LinkEmail, LinkModify, LinkDelete string) TableRowOpenRequest {
+func NewTableRowOpenRequest(ThesisType, Name, CourseOfStudy, GPA, RequestDate, Status, Email, Tuid string) TableRowOpenRequest {
 	return TableRowOpenRequest{
 		ThesisTypeBadge: view_protected_common_badges.SetThesisTypeBadge(ThesisType),
 		ThesisType:      ThesisType,
@@ -36,8 +35,7 @@ func NewTableRowOpenRequest(ThesisType, Name, CourseOfStudy, GPA, RequestDate, S
 		GPA:             GPA,
 		RequestDate:     RequestDate,
 		Status:          Status,
-		LinkEmail:       LinkEmail,
-		LinkModify:      LinkModify,
-		LinkDelete:      LinkDelete,
+		Email:           Email,
+		Tuid:            Tuid,
 	}
 }

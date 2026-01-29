@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"html"
 	"io"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -121,6 +122,7 @@ func HandleFileDownload(c *gin.Context) {
 	fuid := html.EscapeString(c.Query("fuid"))
 	category := html.EscapeString(c.Query("category"))
 	tuid := html.EscapeString(c.Query("tuid"))
+	noDownload := c.Query("noDownload") == "1"
 
 	var fileInfo *db_model.ThesisFile
 	var err error
@@ -166,11 +168,34 @@ func HandleFileDownload(c *gin.Context) {
 		return
 	}
 
-	// Set headers for download
-	c.Header("Content-Description", "File Transfer")
-	c.Header("Content-Transfer-Encoding", "binary")
-	c.Header("Content-Disposition", "attachment; filename="+fileInfo.OriginalFileName)
-	c.Header("Content-Type", "application/octet-stream")
+	// Set headers based on noDownload parameter
+	if noDownload {
+		// Display inline in browser
+		c.Header("Content-Disposition", "inline; filename="+fileInfo.OriginalFileName)
+
+		// Detect content type from file extension
+		ext := filepath.Ext(fileInfo.OriginalFileName)
+		contentType := mime.TypeByExtension(ext)
+		if contentType == "" {
+			// Fallback: read first 512 bytes to detect content type
+			file, err := os.Open(filePath)
+			if err == nil {
+				defer file.Close()
+				buffer := make([]byte, 512)
+				n, _ := file.Read(buffer)
+				contentType = http.DetectContentType(buffer[:n])
+			} else {
+				contentType = "application/octet-stream"
+			}
+		}
+		c.Header("Content-Type", contentType)
+	} else {
+		// Download as attachment
+		c.Header("Content-Description", "File Transfer")
+		c.Header("Content-Transfer-Encoding", "binary")
+		c.Header("Content-Disposition", "attachment; filename="+fileInfo.OriginalFileName)
+		c.Header("Content-Type", "application/octet-stream")
+	}
 
 	// Serve the file
 	c.File(filePath)
