@@ -5,8 +5,8 @@
         <h1>View Supervision Request</h1>
         <div class="btn-group" role="group" data-tuid="{{ .TUID }}">
             <a href="/edit?tuid={{ .ThesisInf.Tuid }}" class="btn btn-primary border-start">Edit</a>
-            <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=transcript-of-records" id="btnToR" class="btn btn-outline-secondary btn-download-category" data-category="transcript-of-records" title="Download latest Transcript of Records">ToR</button>
-            <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=cv" id="btnCV" class="btn btn-outline-secondary btn-download-category" data-category="cv" title="Download latest CV">CV</button>
+            <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=transcript-of-records&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" title="Download latest Transcript of Records">ToR</button>
+            <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=cv&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" title="Download latest CV">CV</button>
             <a href="/delete?tuid={{ .ThesisInf.Tuid }}" class="btn border border-danger bg-white text-danger" role="button">&#128465;</a>
         </div>
     </div>
@@ -137,7 +137,7 @@
                                 <small class="text-muted">
                                     {{ .FileSize }} bytes • 
                                     Uploaded {{ .UploadDate.Format "2006-01-02 15:04" }} • 
-                                    Category: {{ if eq .Category "final-thesis" }}Final Thesis{{ else if eq .Category "cv" }}CV{{ else if eq .Category "transcript-of-records" }}Transcript of Records{{ else if eq .Category "" }}Other{{ else }}{{ .Category }}{{ end }}
+                                    Category: {{ if eq .Category "final-thesis" }}Final Thesis{{ else if eq .Category "cv" }}CV{{ else if eq .Category "transcript-of-records" }}Transcript of Records{{ else if eq .Category "slides" }}Slides{{ else if eq .Category "" }}Other{{ else }}{{ .Category }}{{ end }}
                                 </small>
                             </div>
                             <div class="btn-group" role="group">
@@ -160,8 +160,9 @@
                 <div class="col-md-4">
                     <label for="categorySelect" class="form-label">Category</label>
                     <select class="form-select" id="categorySelect" name="category" required>
-                        <option value="other">Select category...</option>
+                        <option disabled selected value="other">--- Select category ---</option>
                         <option value="final-thesis">Final Thesis</option>
+                        <option value="slides">Slides</option>
                         <option value="cv">CV</option>
                         <option value="transcript-of-records">Transcript of Records</option>
                         <option value="other">Other</option>

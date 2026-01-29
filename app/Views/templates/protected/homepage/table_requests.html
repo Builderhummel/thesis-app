@@ -3,7 +3,7 @@
 <p class="h3">Open Requests</p>
 <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
     <table class="table table-hover align-middle">
-        <colgroup>
+      <colgroup>
           <col style="width: 2.5%;">  <!-- Type -->
           <col style="width: 30%;">  <!-- Name -->
           <col style="width: 30%;">  <!-- Course of Study -->
@@ -36,9 +36,10 @@
             <td><span class="badge bg-danger">{{ .Status }}</span></td>
             <td>
               <div class="btn-group btn-group-sm" role="group">
-                <a href="{{ .LinkEmail }}" class="btn btn-outline-primary" role="button">&#9993;</a>
-                <a href="{{ .LinkModify }}" class="btn btn-outline-primary" role="button">&#9432;</a>
-                <a href="{{ .LinkDelete }}" class="btn btn-outline-danger" role="button">&#128465;</a>
+                <a href="mailto:{{ .Email }}" class="btn btn-outline-primary" role="button">&#9993;</a>
+                <a href="/view?tuid={{ .Tuid }}" class="btn btn-outline-primary" role="button">&#9432;</a>
+                <a href="/files/download?tuid={{ .Tuid }}&category=transcript-of-records&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" data-category="transcript-of-records" title="Open latest Transcript of Records">ToR</a>
+                <a href="/files/download?tuid={{ .Tuid }}&category=cv&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" data-category="cv" title="Open latest CV">CV</a>
               </div>
             </td>
         </tr>

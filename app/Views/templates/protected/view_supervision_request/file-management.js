@@ -13,14 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 deleteFile(fuid);
             }
         }
-        
-        // Handle category download buttons
-        if (e.target.classList.contains('btn-download-category')) {
-            const category = e.target.getAttribute('data-category');
-            if (category) {
-                downloadLatestByCategory(category);
-            }
-        }
     });
 });
 
