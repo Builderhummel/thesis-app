@@ -655,20 +655,30 @@ func (dbc *DBController) GtDataTblAllSupervisions() ([]map[string]string, error)
 func (dbc *DBController) GtDataTblMySupervisions(supervisor_puid string) ([]map[string]string, error) {
 	// Main query for thesis information
 	query := `
-        SELECT DISTINCT
-            t.TUID,
-            t.ThesisType,
-            t.Name,
-            t.ThesisTitle,
-            COALESCE(t.Deadline, '') as Deadline,
-            t.ThesisStatus,
-            t.Email,
+		SELECT DISTINCT
+			t.TUID,
+			t.ThesisType,
+			t.Name,
+			t.ThesisTitle,
+			COALESCE(t.Deadline, '') as Deadline,
+			t.ThesisStatus,
+			t.Email,
 			COALESCE(t.Semester, '') as Semester
-        FROM Thesis t
-        JOIN SupervisorJunction sj ON t.TUID = sj.TUID
-        JOIN PersonalData pd ON pd.PDUID = ?
-        WHERE sj.PDUID = ?
-		ORDER BY Deadline DESC`
+		FROM Thesis t
+		JOIN SupervisorJunction sj ON t.TUID = sj.TUID
+		JOIN PersonalData pd ON pd.PDUID = ?
+		WHERE sj.PDUID = ?
+		ORDER BY 
+			CASE t.ThesisStatus
+				WHEN 'working' THEN 1
+				WHEN 'request' THEN 2
+				WHEN 'contacted' THEN 3
+				WHEN 'completed' THEN 4
+				WHEN 'dropped' THEN 5
+				WHEN 'reject' THEN 6
+				ELSE 7
+			END,
+			Deadline ASC`
 
 	rows, err := dbc.db.Query(query, supervisor_puid, supervisor_puid)
 	if err != nil {
