@@ -91,6 +91,14 @@ func GetUserByPUID(puid string) (PersonalData, error) {
 	return data, nil
 }
 
+func GetUserByLoginHandle(loginHandle string) (PersonalData, error) {
+	data, err := dbSession.GtUsrByLgnHndle(loginHandle)
+	if err != nil {
+		return PersonalData{}, err
+	}
+	return data, nil
+}
+
 func GetAllSupervisors() ([]PersonalData, error) {
 	data, err := dbSession.GtAllSupervisors()
 	if err != nil {
@@ -189,6 +197,22 @@ func InsertNewThesisRequest(name, email, courseOfStudy, thesisType, thesisTitle,
 
 func UpdateThesisInfo(td *ThesisFullData) error {
 	err := dbSession.UpdtThesisInfo(td)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func AddThesisSupervisor(tuid string, supervisor PersonalData) error {
+	err := dbSession.addToJunction(tuid, supervisor, "SupervisorJunction")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateThesisSupervisors(tuid string, supervisors []PersonalData) error {
+	err := dbSession.updtJunction(tuid, supervisors, "SupervisorJunction")
 	if err != nil {
 		return err
 	}

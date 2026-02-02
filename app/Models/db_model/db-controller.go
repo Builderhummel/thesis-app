@@ -265,6 +265,32 @@ func (dbc *DBController) GtUsrByPUID(puid string) (PersonalData, error) {
 	return user, nil
 }
 
+func (dbc *DBController) GtUsrByLgnHndle(loginHandle string) (PersonalData, error) {
+	query := `
+	SELECT
+		COALESCE(pd.PDUID, ''),
+		COALESCE(pd.Name, ''),
+		COALESCE(pd.Email, ''),
+		COALESCE(a.Role, ''),
+		COALESCE(a.LoginHandle, ''),
+		COALESCE(a.Active, FALSE),
+		COALESCE(pd.IsSupervisor, FALSE),
+		COALESCE(pd.IsExaminer, FALSE)
+	FROM
+		PersonalData pd
+	LEFT JOIN
+		Account a ON pd.PDUID = a.PDUID
+	WHERE
+		a.LoginHandle = ?
+	`
+	var user PersonalData
+	err := dbc.db.QueryRow(query, loginHandle).Scan(&user.PDUid, &user.Name, &user.Email, &user.Role, &user.Handle, &user.IsActive, &user.IsSupervisor, &user.IsExaminer)
+	if err != nil {
+		return PersonalData{}, fmt.Errorf("error fetching user by login handle: %v", err)
+	}
+	return user, nil
+}
+
 func (dbc *DBController) GtAllSupervisors() ([]PersonalData, error) {
 	query := "SELECT PDUID, Name, Email FROM PersonalData WHERE IsSupervisor = 1"
 
@@ -964,11 +990,11 @@ func (dbc *DBController) UpdtThesisInfo(td *ThesisFullData) error {
 		return fmt.Errorf("update thesis: %v", err)
 	}
 
-	if err := dbc.updtJunction(tx, td.TUID, td.Supervisors, "SupervisorJunction"); err != nil {
+	if err := dbc.updtJunctionWithTransaction(tx, td.TUID, td.Supervisors, "SupervisorJunction"); err != nil {
 		return fmt.Errorf("update supervisors: %v", err)
 	}
 
-	if err := dbc.updtJunction(tx, td.TUID, td.Examiners, "ExaminerJunction"); err != nil {
+	if err := dbc.updtJunctionWithTransaction(tx, td.TUID, td.Examiners, "ExaminerJunction"); err != nil {
 		return fmt.Errorf("update examiners: %v", err)
 	}
 
@@ -1027,7 +1053,66 @@ func (dbc *DBController) ChkIfThesisIsBooked(thesisID string) (bool, error) {
 	return booked, nil
 }
 
-func (dbc *DBController) updtJunction(tx *sql.Tx, thesisID string, people []PersonalData, junctionTable string) error {
+func (dbc *DBController) updtJunction(thesisID string, people []PersonalData, junctionTable string) error {
+	tx, err := dbc.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+		} else if err != nil {
+			tx.Rollback() // err is non-nil; don't change it
+		} else {
+			err = tx.Commit() // err is nil; if Commit returns error update err
+		}
+	}()
+	return dbc.updtJunctionWithTransaction(tx, thesisID, people, junctionTable)
+}
+
+func (dbc *DBController) addToJunction(thesisID string, person PersonalData, junctionTable string) error {
+	tx, err := dbc.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+		} else if err != nil {
+			tx.Rollback() // err is non-nil; don't change it
+		} else {
+			err = tx.Commit() // err is nil; if Commit returns error update err
+		}
+	}()
+
+	var exists bool
+	err = tx.QueryRow("SELECT EXISTS(SELECT 1 FROM PersonalData WHERE PDUID = ?)", person.PDUid).Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("pduid validation error: %v", err)
+	}
+	if !exists {
+		return fmt.Errorf("invalid PDUID: %s", person.PDUid)
+	}
+
+	// Check if the entry already exists to avoid duplicates
+	err = tx.QueryRow(fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE TUID = ? AND PDUID = ?)", junctionTable), thesisID, person.PDUid).Scan(&exists) // Not insecure, bc fixed variable
+	if err != nil {
+		return fmt.Errorf("junction existence check error: %v", err)
+	}
+	if exists {
+		return fmt.Errorf("entry already exists in junction table for TUID: %s and PDUID: %s", thesisID, person.PDUid)
+	}
+
+	_, err = tx.Exec(fmt.Sprintf("INSERT INTO %s (TUID, PDUID) VALUES (?, ?)", junctionTable), // Not insecure, bc fixed variable
+		thesisID, person.PDUid)
+	if err != nil {
+		return fmt.Errorf("junction insert error: %v", err)
+	}
+
+	return nil
+}
+
+func (dbc *DBController) updtJunctionWithTransaction(tx *sql.Tx, thesisID string, people []PersonalData, junctionTable string) error {
 	_, err := tx.Exec(fmt.Sprintf("DELETE FROM %s WHERE TUID = ?", junctionTable), thesisID) // Not insecure, bc fixed variable
 	if err != nil {
 		return err

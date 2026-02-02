@@ -34,6 +34,7 @@ func Router(r *gin.Engine) {
 
 	protected.GET("/edit", RenderEditSupervisionRequestForm)
 	protected.POST("/edit", HandleEditSupervisionRequest)
+	protected.POST("/edit/assign_to_me", HandleEditAssignToMe)
 	protected.StaticFile("/js/custom/edit/select2.js", "./app/Views/templates/protected/edit_supervison_request/select2.js")
 
 	protected.GET("/export", HandleExport)

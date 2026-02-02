@@ -4,10 +4,14 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>View Supervision Request</h1>
         <div class="btn-group" role="group" data-tuid="{{ .TUID }}">
-            <a href="/edit?tuid={{ .ThesisInf.Tuid }}" class="btn btn-primary border-start">Edit</a>
-            <!-- GITLAB Link-->
-            <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=transcript-of-records&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" title="Download latest Transcript of Records">ToR</button>
-            <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=cv&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" title="Download latest CV">CV</button>
+            <!-- Assign to me button -->
+            <form action="/edit/assign_to_me" method="POST" class="d-inline m-0">
+                <input type="hidden" name="tuid" value="{{ .ThesisInf.Tuid }}">
+                <button type="submit" class="btn btn-secondary rounded-start rounded-end-0">Assign to me</button>
+            </form>
+            <a href="/edit?tuid={{ .ThesisInf.Tuid }}" class="btn btn-primary">Edit</a>
+            <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=transcript-of-records&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" title="Download latest Transcript of Records">ToR</a>
+            <a href="/files/download?tuid={{ .ThesisInf.Tuid }}&category=cv&noDownload=1" target="_blank" class="btn btn-outline-secondary btn-download-category" title="Download latest CV">CV</a>
             <a href="/delete?tuid={{ .ThesisInf.Tuid }}" class="btn border border-danger bg-white text-danger" role="button">&#128465;</a>
         </div>
     </div>

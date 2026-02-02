@@ -212,3 +212,46 @@ func HandleEditSupervisionRequest(c *gin.Context) {
 	returnUrl := fmt.Sprintf("/view?tuid=%s", tuid)
 	c.Redirect(http.StatusSeeOther, returnUrl) // TODO: Add success message (flash alert?)
 }
+
+// POST function
+func HandleEditAssignToMe(c *gin.Context) {
+	user_id, err := auth_controller.ExtractTokenUserID(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not extract user handle"}) //TODO: Proper error handling
+		return
+	}
+
+	userRole := auth_controller.GetUserRoleFromContext(c)
+	if !auth_controller.MinUserGroup(userRole, roles.RoleResearcher) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
+		return
+	}
+
+	tuid := html.EscapeString(c.PostForm("tuid"))
+	if tuid == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No tuid provided"})
+		return
+	}
+	if tuid_num, err := strconv.Atoi(tuid); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid tuid"})
+		return
+	} else if tuid_num < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid tuid"})
+		return
+	}
+
+	userData, err := db_model.GetUserByLoginHandle(user_id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve user data"})
+		return
+	}
+
+	err = db_model.AddThesisSupervisor(tuid, userData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not assign supervisor"})
+		return
+	}
+
+	returnUrl := fmt.Sprintf("/view?tuid=%s", tuid)
+	c.Redirect(http.StatusSeeOther, returnUrl)
+}
