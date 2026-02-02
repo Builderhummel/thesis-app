@@ -948,15 +948,19 @@ func (dbc *DBController) GtAllDataFullSupervision() ([]*ThesisFullData, error) {
 	return thesisList, nil
 }
 
-func (dbc *DBController) InsrtNwThsisRequest(name, email, courseOfStudy, thesisType, thesisTitle, gpa, requestDate, notes string) error {
-	_, err := dbc.db.Exec(`
+func (dbc *DBController) InsrtNwThsisRequest(name, email, courseOfStudy, thesisType, thesisTitle, gpa, requestDate, notes string) (string, error) {
+	result, err := dbc.db.Exec(`
 		INSERT INTO Thesis (Name, Email, StudyProgram, ThesisType, ThesisStatus, ThesisTitle, GPA, RequestDate, Notes)
 		VALUES (?, ?, ?, ?, 'request', ?, ?, ?, ?)
 	`, name, email, courseOfStudy, thesisType, thesisTitle, gpa, requestDate, notes)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	lastID, err := result.LastInsertId()
+	if err != nil {
+		return "", err
+	}
+	return strconv.FormatInt(lastID, 10), nil
 }
 
 func (dbc *DBController) UpdtThesisInfo(td *ThesisFullData) error {

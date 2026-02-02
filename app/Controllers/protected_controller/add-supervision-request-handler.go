@@ -38,10 +38,10 @@ func HandleNewSupervisionRequest(c *gin.Context) {
 	svrf.Notes = c.PostForm("notes")
 
 	// Store values in DB
-	err := db_model.InsertNewThesisRequest(svrf.Name, svrf.Email, svrf.CourseOfStudy, svrf.ThesisType, svrf.ThesisTitle, svrf.GPA, svrf.ContactDate, svrf.Notes)
+	tuid, err := db_model.InsertNewThesisRequest(svrf.Name, svrf.Email, svrf.CourseOfStudy, svrf.ThesisType, svrf.ThesisTitle, svrf.GPA, svrf.ContactDate, svrf.Notes)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()}) //TODO: Proper error handling
 		return
 	}
-	c.Redirect(http.StatusSeeOther, "/") // TODO: Add success message (flash alert?)
+	c.Redirect(http.StatusSeeOther, "/view?tuid="+tuid)
 }
