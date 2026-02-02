@@ -26,15 +26,13 @@ go.work.sum
 
 # Config file
 config.json
+config.json.valid
 
 # Launcher file
 launcher.sh
 
 # Apple
 .DS_Store
-
-# Temporary
-docker/
 
 # Uploads
 uploads/
