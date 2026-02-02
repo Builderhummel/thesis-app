@@ -248,7 +248,7 @@ func HandleEditAssignToMe(c *gin.Context) {
 
 	err = db_model.AddThesisSupervisor(tuid, userData)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not assign supervisor"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not assign supervisor: " + err.Error()})
 		return
 	}
 

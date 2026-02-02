@@ -1094,6 +1094,23 @@ func (dbc *DBController) addToJunction(thesisID string, person PersonalData, jun
 		return fmt.Errorf("invalid PDUID: %s", person.PDUid)
 	}
 
+	// Check if user has permission (isSupervisor= or isExaminer=1)
+	var hasPermission bool
+	err = tx.QueryRow(fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM PersonalData WHERE PDUID = ? AND (%s = 1))", // Not insecure, bc fixed variable
+		func() string {
+			if junctionTable == "SupervisorJunction" {
+				return "IsSupervisor"
+			}
+			return "IsExaminer"
+		}()),
+		person.PDUid).Scan(&hasPermission)
+	if err != nil {
+		return fmt.Errorf("permission check error: %v", err)
+	}
+	if !hasPermission {
+		return fmt.Errorf("person with PDUID: %s does not have permission for junction table: %s", person.PDUid, junctionTable)
+	}
+
 	// Check if the entry already exists to avoid duplicates
 	err = tx.QueryRow(fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE TUID = ? AND PDUID = ?)", junctionTable), thesisID, person.PDUid).Scan(&exists) // Not insecure, bc fixed variable
 	if err != nil {
